@@ -1,17 +1,48 @@
 #include <iostream>
+#include <vector>
+#include "Files.h"
+#include "City.h"
+#include "Graphh.h"
+#include"Edge.h"
+#include <list>
+#include <unordered_map>
 using namespace std;
 int main() {
+    
+   //// Create an instance of the Files class
+   // vector<City> cities;
+   // Files fileH;
+   // City c("cairo");
+   // City c1("alex");
+   // City c2("zft");
 
-    if (lines.empty()) {
-        cerr << "Error: No lines read from input file." << endl;
-        return 0; // Exit with error code
-    }
+   //// Read lines from input file "input.txt"
 
-    // Display lines read from input file
-    cout << "Lines read from " << inputFilename << ":" << endl;
-    for (const string& line : lines) {
-        cout << line << endl;
+   // string inputFilename = "input.txt";
+   // vector<string> lines = fileH.readLines(inputFilename);
+
+   //// Display lines read from input file
+
+   // cout << "Lines read from " << inputFilename << ":" << endl;
+   // for (const string& line : lines) {
+   //     cout << line << endl;
+   // }
+
+   //// Write lines to output file "output.txt"
+   //
+   // string outputFilename = "output.txt";
+   // fileH.writeCity(cities);
+   // 
+
+   // cout << "Lines written to " << outputFilename << " successfully." << endl;
+    City c;
+    City c1;
+    vector<City> cities;
+
+    Edge  e("cairo","alex",200);
+    e.addEdge("cairo", "alex", 220,cities);
+
+
+    return 0;
 }
-
-
-
+   
