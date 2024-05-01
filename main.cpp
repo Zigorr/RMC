@@ -1,3 +1,4 @@
+#pragma once
 #include <iostream>
 #include <vector>
 #include "Files.h"
@@ -6,6 +7,7 @@
 #include"Edge.h"
 #include <list>
 #include <unordered_map>
+#include "Menu.h"
 using namespace std;
 int main() {
     
@@ -38,9 +40,10 @@ int main() {
     City c;
     City c1;
     vector<City> cities;
-
-    Edge  e("cairo","alex",200);
-    e.addEdge("cairo", "alex", 220,cities);
+    Menu m;
+    m.display();
+    Edge  e("cairo", "alex", 200);
+    // e.addEdge("cairo", "alex", 220,cities);
 
 
     return 0;

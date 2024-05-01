@@ -1,43 +1,35 @@
+#include "Edge.h"
 #include "City.h"
-#include <string>
-#include <list>
-#include<iostream>
-#include <unordered_map>
 using namespace std;
-City::City(string cityName)  
-{
-    name = cityName;
-}
-
-City::City(string cityName, string city1Name)
-{
-    city1Name;
-    cityName;
-}
 
 City::City()
 {
-    name = "NULL";
+	cityname = "";
 }
 
-bool City::findcity()
+City::City(string cityname)
 {
-
-    return false;
+	this->cityname = cityname;
 }
 
-string City::getName()
+string City::getcityname()
 {
-    return name;
+	return cityname;
 }
 
-void City::addcity()
+void City::setcityname(string cityname)
 {
-    string cityName;
-    Edge e;
-    cout << "Enter the city Name :  ";
-    cin >> cityName;
-    City z(cityName);
-    cities.push_back(cityName);
-   // e.dis.insert();
+	this->cityname = cityname;
 }
+
+vector<Edge> City::getedges()
+{
+	return edges;
+}
+
+void City::setedges(vector<Edge> v)
+{
+	 edges = v;
+}
+
+
