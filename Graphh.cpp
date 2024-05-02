@@ -9,6 +9,15 @@
 using namespace std;
 vector<Edge> v;// temp vector
 City c;
+unordered_map<string, City> Graphh::getmap()
+{
+    return unordered_map<string, City>();
+}
+
+void Graphh::setmap(unordered_map<string, City> map)
+{
+    cities = map;
+}
 void Graphh::addCity(City city)
 {
     if (cities.find(city.getcityname()) != cities.end())
@@ -94,44 +103,52 @@ void Graphh::addEdge(City start, City end, int weight)
             cout << "Start: " << it->getstartcity() << ", End: " << it->getendcity() << ", Weight: " << it->getweight() << endl;
         }
 }
-
 void Graphh::deleteCity(City city) {
-    bool cityDeleted = false; 
-    vector<Edge> temp;
-    v = c.getedges(); 
-    for (auto it = v.begin(); it != v.end(); ++it) {
-        if ((it->getstartcity() != c.getcityname()) && (it->getendcity() != c.getcityname()))
-        {
-            temp.push_back(*it);
-        }
-        else 
-        {
-            cityDeleted = true;
-        }
-    }
-    if (cityDeleted) {
-        cout << "City deleted successfully." << endl;
-        v = temp;
-    }
-    else {
-        cout << "City with the specified details not found." << endl;
-    }
-    cout << "Remaining edges:" << endl;
-    for (auto it = v.begin(); it != v.end(); it++) {
-        cout << " Start : " << it->getstartcity() << " -> "
-            << " ( End : " << it->getendcity() << " , Weight  " << it->getweight() << " ) -> " << endl;
-    }
-    c.setedges(temp);
-}
+    bool cityDeleted = false;
+    vector<Edge>temp; // Use a new vector for clarity
+    unordered_map<string, City> tmap;
+    tmap = getmap();
+    v = c.getedges();
 
+    auto it = tmap.find(city.getcityname());
+
+    // Check if the city exists in the map
+    if (it != tmap.end()) {
+        // Erase the entry using the iterator
+        tmap.erase(it);
+
+        // Iterate through edges, removing matching ones
+        for (auto it = v.begin(); it != v.end(); ) {
+            if (it->getstartcity() != city.getcityname() && it->getendcity() != city.getcityname()) {
+                temp.push_back(*it);
+                ++it; // Move iterator only if the edge is kept
+            }
+            else {
+                cityDeleted = true;
+                it = v.erase(it); // Erase the matching edge and update iterator
+            }
+        }
+
+        if (cityDeleted) {
+            cout << "City deleted successfully." << endl;
+            v = temp; // Now assign the new vector with removed edges to v
+        }
+        else {
+            cout << "City with the specified details not found." << endl;
+        }
+        cout << "Remaining Edges:" << endl;
+        for (auto it = v.begin(); it != v.end(); it++) {
+            cout << " Start : " << it->getstartcity() << " -> "
+                << " ( End : " << it->getendcity() << " , Weight  " << it->getweight() << " ) -> " << endl;
+        }
+        c.setedges(temp);
+    }
+}
 void Graphh::deleteEdge(Edge e)
 {
     vector<Edge>temp;
     v = c.getedges();
-   /* string start = e.getstartcity();
-    string end = e.getendcity();
-    int weight = e.getweight();*/
-
+   
     bool edgeDeleted = false; // Flag to track if any edge was deleted
     //125
     for (auto it = v.begin(); it != v.end(); ++it) {
@@ -154,100 +171,5 @@ void Graphh::deleteEdge(Edge e)
     for (auto it = v.begin(); it != v.end(); it++) {
         cout << " Start : " << it->getstartcity() << " -> " << " ( End : " << it->getendcity() << " , Weight  " << it->getweight() << " ) -> " << endl;
     }
-    c.setedges(temp);
-    
+    c.setedges(temp);   
 }
-
-//    
-//        vector<Edge>::iterator it;
-//        v = c.getedges();
-//
-//        int i = 1;
-//        int answer;
-//// if (it->getstartcity() == start.getcityname() && it->getendcity() == end.getcityname()) {
-//        // Displaying edges and checking for deletion
-//        for (it = v.begin(); it != v.end(); it++) 
-//        {   
-//                cout << " ( " << i  << it->getstartcity() << " -> " <<  it->getendcity() << it->getweight() << " ) -> " << endl;
-//            i++;
-//        }
-//
-//        cout << endl << "Which Edge do you want to delete: ";
-//        cin >> answer;
-//
-//        // Deleting edge
-//        if (answer > 0 && answer <= v.size()) {
-//            // Finding the edge to delete
-//            it = v.begin();
-//            int count = 1;
-//            for (auto it = v.begin(); it != v.end(); ) {
-//                if (it->getstartcity() == start.getcityname() && it->getendcity() == end.getcityname()) {
-//                    // Erase the edge from the vector
-//                    v.erase(it);
-//                }
-//                else {
-//                    ++it; //
-//                }
-//                if (it->getstartcity() == end.getcityname() && it->getendcity() == start.getcityname()) {
-//                    // Erase the edge from the vector
-//                    v.erase(it);
-//                }
-//                else {
-//                    ++it; // Move to the next edge
-//                }
-//            }
-//
-//
-//
-//
-//            // Displaying remaining edges
-//            int q = 1;
-//            for (it = v.begin(); it != v.end(); it++) {
-//                cout << " ( " << i << it->getstartcity() << " -> " << it->getendcity() << it->getweight() << " ) -> " << endl;
-//                q++;
-//            }
-//        }
-//        else {
-//            cout << "Invalid edge number." << endl;
-//        }
-//    }
-//void Graphh::deleteEdge(const string& startCity, const string& endCity) {
-//{
-//    //vector<Edge>::iterator it;
-//    //v = c.getedges();
-//
-//    //int i = 1;
-//    //int q = 1;
-//    //int answer;
-//
-//    //for (it = v.begin(); it != v.end(); it++)
-//    //{
-//    //    cout << i << " Start : " << it->getstartcity() << " -> " << " ( End : " << it->getendcity() << " , Weight  " << it->getweight() << " ) -> " << endl;
-//    //    i++;
-//    //}
-//
-//    //    //cities.at(start.getcityname());
-//    //    //cities.at(end.getcityname());
-//
-//    //cout << endl << "Which Edge do you want to delete " << endl;
-//    //cin >> answer;
-//    //
-//    //// Deleting edge//arr[alex]=cairo
-//    //if (answer > 0 && answer <= v.size())
-//    //{
-//    //    
-//    //    v.erase(v.begin() + answer - 1);
-//    //    // Displaying remaining edges
-//    //    int q = 1;
-//    //    for (it = v.begin(); it != v.end(); it++) {
-//    //        cout << q << " Start : " << it->getstartcity() << " -> " << " ( End : " << it->getendcity() << " , Weight  " << it->getweight() << " ) -> " << endl;
-//    //        q++;
-//    //    }
-//    //}
-//    //else
-//    //{
-//    //    cout << "Invalid edge number." << endl;
-//    //}
-//   
-//    
-//}

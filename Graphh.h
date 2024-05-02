@@ -18,6 +18,8 @@ public:
 	void  deleteEdge(Edge e);
 	void findcity(string start, string end);
 	void addEdge(City start, City end, int weight);
+	unordered_map<string, City> getmap();
+	void setmap(unordered_map<string, City> map);
 	//Edge findMST();                   // Implements Prim's algorithm to find the minimum spanning tree and returns the total distance
 	//void traverseBFS(City start);    // Performs Breadth - First Search starting from a city // deleteEdge(City start, City end);
 	//void traverseDFS(City start);   // Performs Depth - First Search starting from a city
