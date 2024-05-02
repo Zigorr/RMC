@@ -1,16 +1,16 @@
-#pragma once
-#include "Files.h"
-#include"City.h"
-#include"Edge.h"
-#include<iostream>
-#include <fstream>
-#include <string>
-#include <vector>
-#include <unordered_map>
-vector<Edge> v;
-using namespace std;
-
-////Files::Files(const string & filename) {
+//#pragma once
+//#include "Files.h"
+//#include"City.h"
+//#include"Edge.h"
+//#include"Graphh.h"
+//#include<iostream>
+//#include <fstream>
+//#include <string>
+//#include <vector>
+//#include <unordered_map>
+//vector<Edge> v;
+//using namespace std;
+//////Files::Files(const string & filename) {
 ////    fileStream.open(filename);
 ////    if (!fileStream.is_open()) {
 ////       cerr << "Error: Could not open file " << filename <<endl;
@@ -68,41 +68,66 @@ using namespace std;
 //
 //    outFile.close();
 //}
-template<class T>
-void Files<T>::writeMapoFile(unordered_map<string, City>& cities, const string& filename)
-{
-    ofstream outFile(filename);
-    if (!outFile.is_open()) {
-        cerr << "Error: Couldn't open file for writing." << endl;
-        return;
-    }
+//
+//void Files:: writeVectorToFile(vector<Edge> edges,  string filename) 
+//{
+//    ofstream outFile(filename); // Open the file for writing
+//    if (!outFile.is_open())
+//    {
+//        cerr << "Error: Couldn't open file for writing." << endl;
+//        return;
+//    }
+//
+//    // Write each element of the vector to the file
+//  /*  vector<Edge>::iterator it;*/
+//    for (auto& edge : edges) 
+//    {
+//        outFile << edge.getstartcity() << " " << edge.getendcity() << " " << edge.getweight()<<endl;
+//    }
+//
+//    outFile.close(); // Close the file
+//}
+//void Files::writeVectorToFile(vector<Edge> edges,  string filename)
+//{
+//    ofstream outFile(filename); // Open the file for writing
+//    if (!outFile.is_open())
+//    {
+//        cerr << "Error: Couldn't open file for writing." << endl;
+//        return;
+//    }
+//
+//    // Write each element of the vector to the file
+//  /*  vector<Edge>::iterator it;*/
+//    for (auto& edge : edges)
+//    {
+//        outFile << edge.getstartcity() << " " << edge.getendcity() << " " << edge.getweight() << endl;
+//    }
+//
+//    outFile.close(); // Close the file
+//}
+//vector<Edge> Files::readVectorFromFile( string filename)
+//{
+//    vector<Edge> edges; // Vector to store read edges
+//    ifstream inFile(filename); // Open the file for reading
+//    if (!inFile.is_open())
+//    {
+//        cerr << "Error: Couldn't open file for reading." << endl;
+//        return edges; // Return empty vector
+//    }
+//
+//    string startCity, endCity;
+//    int weight;
+//    while (inFile >> startCity >> endCity >> weight)
+//    {
+//        edges.push_back(Edge(startCity, endCity, weight)); // Create Edge object and add to vector
+//    }
+//
+//    inFile.close(); // Close the file
+//    return edges;
+//}
 
-    for (const auto& pair : cities) {
-        outFile << "Start City: " << pair.first << endl;
-        const City& city = pair.second;
-        const vector<Edge>& edges = city.getEdges();
-        for (const auto& edge : edges) {
-            outFile << "End City: " << edge.getEndCity() << ", Weight: " << edge.getWeight() << endl;
-        }
-    }
 
-    outFile.close();
-}
-template<class T>
-unordered_map<string, City> Files<T>::readMapFromFile(const string& filename) {
-    unordered_map<string, City> map;
-    ifstream inFile(filename);
-    if (!inFile.is_open()) {
-        cerr << "Error: Couldn't open file for reading." << endl;
-        return map;
-    }
-    string startCity, endCity;
-    int weight;
 
-    City c;
-    v = c.getedges();
-
-}
    
 
 

@@ -8,6 +8,7 @@
 #include "City.h"
 #include<iostream>
 #include<string>
+#include "Files.cpp"
 
 using namespace std;
 
@@ -15,7 +16,17 @@ void Menu::display()
 {
     int choice;
     string cityname;
+  /*  Files f;*/
     Graphh g;
+    //string filename = "Map.txt"; // Specify the filename
+
+     //f.readVectorFromFile(filename);
+
+    // Now you can use the 'cities' map to access the data read from the file
+    // For example:
+   /* for (const auto& pair : cities) {
+        cout << "City: " << pair.first << ", Population: " << pair.second.getPopulation() << endl;
+    }*/
 
     do {
            cout << "\nMenu:" << endl;
@@ -23,6 +34,7 @@ void Menu::display()
         cout << "2. Add Edge" << endl;
         cout << "3. Delete City" << endl;
         cout << "4. Delete Edge" << endl;
+        cout << "5. find city" << endl;
            cout << "0. Exit" << endl;
         cout << "Enter your choice: ";
         cin >> choice;
@@ -57,6 +69,29 @@ void Menu::display()
         case 3 :
         {
             string city1;
+            cout << "enter city" << endl;
+            cin >> city1;
+            City c(city1);
+            g.deleteCity(c);
+            break;
+        }
+        // Add cases for delete city, delete edge, and other options
+        case 4:
+        {
+            string city1;
+            string city2;
+            int weight;
+            cout << "enter two cities of the edge you want to delete" << endl;
+            cin >> city1;
+            cin >> city2;
+            cin >> weight;
+            Edge e(city1, city2, weight);
+            g.deleteEdge(e);
+            break;
+        }
+        case 5:
+        {
+            string city1;
             string city2;
             cout << "enter two cities" << endl;
             cin >> city1;
@@ -64,22 +99,11 @@ void Menu::display()
 
             g.findcity(city1, city2);
         }
-        // Add cases for delete city, delete edge, and other options
-        case 4:
-        {
-            string city1;
-            string city2;
-            cout << "enter two cities of the edge you want to delete" << endl;
-            cin >> city1;
-            cin >> city2;
-            City c1(city1);
-            City c2(city1);
-            g.deleteEdge(c1,c2);
-        }
         case 0:
             break;
         default:
             cout << "Invalid choice. Please try again." << endl;
         }
     } while (choice != 0);
+   
 }
