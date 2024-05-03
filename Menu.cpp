@@ -3,7 +3,7 @@
 #include "Menu.h"
 #include "Files.h"
 #include "City.h"
-#include "Graphh.h"
+#include "Graph.h"
 #include "Edge.h"
 #include "City.h"
 #include<iostream>
@@ -17,7 +17,7 @@ void Menu::display()
     int choice;
     string cityname;
   /*  Files f;*/
-    Graphh g;
+    Graph g;
     //string filename = "Map.txt"; // Specify the filename
 
      //f.readVectorFromFile(filename);

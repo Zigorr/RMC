@@ -1,4 +1,4 @@
-#include "Graphh.h"
+#include "Graph.h"
 #include "Menu.h"
 #include <iostream>
 #include <string>
@@ -9,16 +9,16 @@
 using namespace std;
 vector<Edge> v;// temp vector
 City c;
-unordered_map<string, City> Graphh::getmap()
+unordered_map<string, City> Graph::getmap()
 {
     return unordered_map<string, City>();
 }
 
-void Graphh::setmap(unordered_map<string, City> map)
+void Graph::setmap(unordered_map<string, City> map)
 {
     cities = map;
 }
-void Graphh::addCity(City city)
+void Graph::addCity(City city)
 {
     if (cities.find(city.getcityname()) != cities.end())
     {
@@ -31,7 +31,7 @@ void Graphh::addCity(City city)
     }
 
 }
-void Graphh::findcity(string start, string end)
+void Graph::findcity(string start, string end)
 {
     vector<Edge>temp;
     v = c.getedges();
@@ -77,7 +77,7 @@ void Graphh::findcity(string start, string end)
         }
     }
 }
-void Graphh::addEdge(City start, City end, int weight)
+void Graph::addEdge(City start, City end, int weight)
 {
         City c1(start); // ll constructor
         City c2(end);
@@ -103,7 +103,7 @@ void Graphh::addEdge(City start, City end, int weight)
             cout << "Start: " << it->getstartcity() << ", End: " << it->getendcity() << ", Weight: " << it->getweight() << endl;
         }
 }
-void Graphh::deleteCity(City city)
+void Graph::deleteCity(City city)
 {
     string cityName = city.getcityname();
     auto it = cities.find(cityName);
@@ -132,7 +132,7 @@ void Graphh::deleteCity(City city)
     }
 }
 
-void Graphh::deleteEdge(Edge e)
+void Graph::deleteEdge(Edge e)
 {
     vector<Edge> temp;
     v = c.getedges();

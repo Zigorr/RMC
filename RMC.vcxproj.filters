@@ -21,7 +21,7 @@
     <ClCompile Include="City.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Graphh.cpp">
+    <ClCompile Include="Graph.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Files.cpp">
@@ -41,7 +41,7 @@
     <ClInclude Include="City.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Graphh.h">
+    <ClInclude Include="Graph.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Files.h">
