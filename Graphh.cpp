@@ -103,73 +103,65 @@ void Graphh::addEdge(City start, City end, int weight)
             cout << "Start: " << it->getstartcity() << ", End: " << it->getendcity() << ", Weight: " << it->getweight() << endl;
         }
 }
-void Graphh::deleteCity(City city) {
-    bool cityDeleted = false;
-    vector<Edge>temp; // Use a new vector for clarity
-    unordered_map<string, City> tmap;
-    tmap = getmap();
-    v = c.getedges();
+void Graphh::deleteCity(City city)
+{
+    string cityName = city.getcityname();
+    auto it = cities.find(cityName);
 
-    auto it = tmap.find(city.getcityname());
+    if (it != cities.end())
+    {
+        cities.erase(it);
 
-    // Check if the city exists in the map
-    if (it != tmap.end()) {
-        // Erase the entry using the iterator
-        tmap.erase(it);
+        vector<Edge> edges = c.getedges();
+        vector<Edge> tempEdges;
 
-        // Iterate through edges, removing matching ones
-        for (auto it = v.begin(); it != v.end(); ) {
-            if (it->getstartcity() != city.getcityname() && it->getendcity() != city.getcityname()) {
-                temp.push_back(*it);
-                ++it; // Move iterator only if the edge is kept
-            }
-            else {
-                cityDeleted = true;
-                it = v.erase(it); // Erase the matching edge and update iterator
+        for (auto it = edges.begin(); it != edges.end(); ++it)
+        {
+            if (it->getstartcity() != cityName && it->getendcity() != cityName)
+            {
+                tempEdges.push_back(*it);
             }
         }
 
-        if (cityDeleted) {
-            cout << "City deleted successfully." << endl;
-            v = temp; // Now assign the new vector with removed edges to v
-        }
-        else {
-            cout << "City with the specified details not found." << endl;
-        }
-        cout << "Remaining Edges:" << endl;
-        for (auto it = v.begin(); it != v.end(); it++) {
-            cout << " Start : " << it->getstartcity() << " -> "
-                << " ( End : " << it->getendcity() << " , Weight  " << it->getweight() << " ) -> " << endl;
-        }
-        c.setedges(temp);
+        c.setedges(tempEdges);
+        cout << "City " << cityName << " and its associated edges deleted successfully." << endl;
+    }
+    else
+    {
+        cout << cityName << " does not exist." << endl;
     }
 }
+
 void Graphh::deleteEdge(Edge e)
 {
-    vector<Edge>temp;
+    vector<Edge> temp;
     v = c.getedges();
-   
-    bool edgeDeleted = false; // Flag to track if any edge was deleted
-    //125
+    bool edgeDeleted = false;
+
     for (auto it = v.begin(); it != v.end(); ++it) {
-        if (((it->getstartcity() != e.getstartcity() && it->getendcity() != e.getendcity() && it->getweight() != e.getweight()) ||(it->getstartcity() != e.getendcity() && it->getendcity() != e.getstartcity() && it->getweight() != e.getweight()))) {
+        if (it->getstartcity() != e.getstartcity() || it->getendcity() != e.getendcity() || it->getweight() != e.getweight())
+        {
             temp.push_back(*it);
         }
-        else {
+        else
+        {
             edgeDeleted = true;
         }
     }
-    if (edgeDeleted) {
+
+    if (edgeDeleted)
+    {
         cout << "Edge deleted successfully." << endl;
         v = temp;
+        c.setedges(v);
     }
     else
     {
         cout << "Edge with the specified details not found." << endl;
     }
+
     cout << "Remaining edges:" << endl;
     for (auto it = v.begin(); it != v.end(); it++) {
-        cout << " Start : " << it->getstartcity() << " -> " << " ( End : " << it->getendcity() << " , Weight  " << it->getweight() << " ) -> " << endl;
+        cout << "Start: " << it->getstartcity() << " -> " << "End: " << it->getendcity() << " Weight: " << it->getweight() << endl;
     }
-    c.setedges(temp);   
 }
