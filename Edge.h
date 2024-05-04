@@ -10,7 +10,7 @@ private:
 public:
 	Edge();
 	Edge(string startCity, string endCity, int weight);
-	string getStartCity();
-	string getEndCity();
-	int getWeight();
+	string getStartCity() const;
+	string getEndCity() const;
+	int getWeight() const;
 };

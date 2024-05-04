@@ -169,16 +169,22 @@ void Graph::deleteEdge(Edge e)
     }
 }
 void Graph::findMST() const {
-    std::unordered_set<std::string> visited;
-    std::priority_queue<std::pair<int, std::string>, std::vector<std::pair<int, std::string>>, std::greater<std::pair<int, std::string>>> pq;
+    if (cities.empty()) {
+        cout << "Graph is empty. Cannot find Minimum Spanning Tree." << endl;
+        return;
+    }
+    
+    
+    unordered_set<string> visited;
+    priority_queue<pair<int, string>, vector<pair<int, string>>, greater<pair<int, string>>> pq;
 
     // Start with first city
-    pq.push(std::make_pair(0, cities.begin()->first));
+    pq.push(make_pair(0, cities.begin()->first));
 
     int totalDistance = 0;
-    std::cout << "Minimum Spanning Tree:" << std::endl;
+    cout << "Minimum Spanning Tree:" << endl;
     while (!pq.empty()) {
-        std::string city = pq.top().second;
+        string city = pq.top().second;
         int distance = pq.top().first;
         pq.pop();
 
@@ -189,35 +195,39 @@ void Graph::findMST() const {
 
         visited.insert(city);
         totalDistance += distance;
-        std::cout << "From: " << city;
+        cout << "From: " << city;
         if (city != cities.begin()->first) {
-            std::cout << ", Distance: " << distance;
+            cout << ", Distance: " << distance;
         }
-        std::cout << std::endl;
+        cout << endl;
 
         // Add neighbors to priority queue
         for (const auto& neighbor : adjacencyList.at(city)) {
             if (visited.find(neighbor.first) == visited.end()) {
-                pq.push(std::make_pair(neighbor.second, neighbor.first));
+                pq.push(make_pair(neighbor.second, neighbor.first));
             }
         }
     }
-    std::cout << "Total Distance of Minimum Spanning Tree: " << totalDistance << std::endl;
+    cout << "Total Distance of Minimum Spanning Tree: " << totalDistance << endl;
 }
 
 // Function to perform BFS traversal
-void Graph::BFS(const std::string& startCity) const {
-    std::unordered_set<std::string> visited;
-    std::queue<std::string> q;
+void Graph::BFS(const string& startCity) const {
+    if (cities.find(startCity) == cities.end()) {
+        cout << "City " << startCity << " Does not exist in the graph." << endl;
+        return;
+    }
+    unordered_set<string> visited;
+    queue<string> q;
 
     q.push(startCity);
     visited.insert(startCity);
 
-    std::cout << "Breadth First Search traversal starting from " << startCity << ":" << std::endl;
+    cout << "Breadth First Search traversal starting from " << startCity << ":" << endl;
     while (!q.empty()) {
-        std::string city = q.front();
+        string city = q.front();
         q.pop();
-        std::cout << city << " ";
+        cout << city << " ";
 
         for (const auto& neighbor : adjacencyList.at(city)) {
             if (visited.find(neighbor.first) == visited.end()) {
@@ -226,23 +236,27 @@ void Graph::BFS(const std::string& startCity) const {
             }
         }
     }
-    std::cout << std::endl;
+    cout << endl;
 }
 
 // Function to perform DFS traversal
-void Graph::DFS(const std::string& startCity) const {
-    std::unordered_set<std::string> visited;
-    std::stack<std::string> s;
+void Graph::DFS(const string& startCity) const {
+    if (cities.find(startCity) == cities.end()) {
+        cout << "City " << startCity << " does not exist in the graph." << endl;
+        return;
+    }
+    unordered_set<string> visited;
+    stack<string> s;
 
     s.push(startCity);
 
-    std::cout << "Depth First Search traversal starting from " << startCity << ":" << std::endl;
+    cout << "Depth First Search traversal starting from " << startCity << ":" << endl;
     while (!s.empty()) {
-        std::string city = s.top();
+        string city = s.top();
         s.pop();
 
         if (visited.find(city) == visited.end()) {
-            std::cout << city << " ";
+            cout << city << " ";
             visited.insert(city);
 
             for (const auto& neighbor : adjacencyList.at(city)) {
@@ -252,5 +266,20 @@ void Graph::DFS(const std::string& startCity) const {
             }
         }
     }
-    std::cout << std::endl;
+    cout << endl;
+}
+void Graph::displayGraphData() {
+    if (cities.empty()) {
+        cout << "Graph is empty." << endl;
+        return;
+    }
+
+    cout << "Graph Data:" << endl;
+    for (const auto& city : cities) {
+        cout << "City: " << city.first << endl;
+        cout << "Edges:" << endl;
+        for (const auto& edge : city.second.getEdges()) {
+            cout << "   Start: " << edge.getStartCity() << ", End: " << edge.getEndCity() << ", Weight: " << edge.getWeight() << endl;
+        }
+    }
 }

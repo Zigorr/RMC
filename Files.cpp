@@ -36,7 +36,10 @@
 //    ifstream fileStr(filename);  // Open the file for reading
 //
 //    if (!fileStr.is_open()) {
-//        cerr << "Error: Could not open file " << filename << std::endl;
+//        cerr << "Error: Could not open file " << filename << 
+// 
+// 
+// endl;
 //        return lines;  // Return empty vector if file cannot be opened
 //    }
 //

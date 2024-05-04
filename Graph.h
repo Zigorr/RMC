@@ -21,12 +21,15 @@ public:
 	unordered_map<string, City> getMap();
 	void setMap(unordered_map<string, City> map);
 	void findMST() const; // Find MST using Prim's algorithm
-	void BFS(const std::string& startCity) const; // Perform Breadth First Search traversal
-	void DFS(const std::string& startCity) const; // Perform Depth First Search traversal
+	void BFS(const string& startCity) const; // Perform Breadth First Search traversal
+	void DFS(const string& startCity) const; // Perform Depth First Search traversal
+	void displayGraphData();
 
 	//saveToFile();                  // Saves the graph data(cities and edges) to a file
 	//loadFromFile();               // Loads the graph data(cities and edges) from a file(You can implement this during program initialization)
 private:
-	std::unordered_map<std::string, City> cities;
-	std::unordered_map<std::string, std::list<std::pair<std::string, int>>> adjacencyList; // Adjacency list representation for weighted graph
+	
+	
+	unordered_map<string, City> cities;
+	unordered_map<string, list<pair<string, int>>> adjacencyList; // Adjacency list representation for weighted graph
 };

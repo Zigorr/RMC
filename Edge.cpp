@@ -9,24 +9,25 @@ Edge::Edge()
 	weight = 0;
 }
 
-Edge::Edge(string startcity, string endcity, int weight)
+Edge::Edge(string startCity, string endCity, int weight)
 {
-	this->startCity = startcity;
-	this->endCity = endcity;
+	this->startCity = startCity;
+	this->endCity = endCity;
 	this->weight = weight;
 }
 
-string Edge::getStartCity()
+string Edge::getStartCity() const
 {
 	return startCity;
 }
 
-string Edge::getEndCity()
+string Edge::getEndCity() const
 {
 	return endCity;
 }
 
-int Edge::getWeight()
+int Edge::getWeight() 
+	const
 {
 	return weight;
 }

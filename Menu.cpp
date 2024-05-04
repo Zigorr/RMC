@@ -42,6 +42,8 @@ void Menu::display()
            cout << "0. Exit" << endl;
         cout << "Enter your choice: ";
         cin >> choice;
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
         switch (choice) {
         case 1 : {
@@ -102,6 +104,28 @@ void Menu::display()
             cin >> city2;
 
             g.findCity(city1, city2);
+        }
+        case 6: {
+            g.displayGraphData();
+            break;
+        }
+        case 7: {
+            g.findMST();
+            break;
+        }
+        case 8: {
+            string startCity;
+            cout << "Enter starting city for BFS:" << endl;
+            cin >> startCity;
+            g.BFS(startCity);
+            break;
+        }
+        case 9: {
+            string startCity;
+            cout << "Enter starting city for DFS:" << endl;
+            cin >> startCity;
+            g.DFS(startCity);
+            break;
         }
         case 0:
             break;

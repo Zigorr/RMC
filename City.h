@@ -10,8 +10,8 @@ private:
 public:
 	City();
 	City(string cityname);
-	string getCityName();
+	string getCityName() const;
 	void setCityName(string cityName);
-	vector<Edge>getEdges();
+	vector<Edge>getEdges() const;
 	void setEdges(vector<Edge> v);
 };

@@ -12,7 +12,7 @@ City::City(string cityname)
 	this->cityName = cityname;
 }
 
-string City::getCityName()
+string City::getCityName() const
 {
 	return cityName;
 }
@@ -22,7 +22,7 @@ void City::setCityName(string cityname)
 	this->cityName = cityname;
 }
 
-vector<Edge> City::getEdges()
+vector<Edge> City::getEdges() const
 {
 	return edges;
 }
