@@ -127,7 +127,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Algorithm.cpp" />
     <ClCompile Include="City.cpp" />
     <ClCompile Include="Edge.cpp" />
     <ClCompile Include="Files.cpp" />
@@ -136,7 +135,6 @@
     <ClCompile Include="Menu.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Algorithm.h" />
     <ClInclude Include="City.h" />
     <ClInclude Include="Edge.h" />
     <ClInclude Include="Files.h" />
