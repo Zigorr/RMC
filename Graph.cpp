@@ -6,6 +6,9 @@
 #include <unordered_map>
 #include "Menu.h"
 #include "City.h"
+#include <stack>
+#include <unordered_set>
+#include <queue>
 using namespace std;
 vector<Edge> v;// temp vector
 City c;
@@ -164,4 +167,90 @@ void Graph::deleteEdge(Edge e)
     for (auto it = v.begin(); it != v.end(); it++) {
         cout << "Start: " << it->getStartCity() << " -> " << "End: " << it->getEndCity() << " Weight: " << it->getWeight() << endl;
     }
+}
+void Graph::findMST() const {
+    std::unordered_set<std::string> visited;
+    std::priority_queue<std::pair<int, std::string>, std::vector<std::pair<int, std::string>>, std::greater<std::pair<int, std::string>>> pq;
+
+    // Start with first city
+    pq.push(std::make_pair(0, cities.begin()->first));
+
+    int totalDistance = 0;
+    std::cout << "Minimum Spanning Tree:" << std::endl;
+    while (!pq.empty()) {
+        std::string city = pq.top().second;
+        int distance = pq.top().first;
+        pq.pop();
+
+        // If city already visited, skip
+        if (visited.find(city) != visited.end()) {
+            continue;
+        }
+
+        visited.insert(city);
+        totalDistance += distance;
+        std::cout << "From: " << city;
+        if (city != cities.begin()->first) {
+            std::cout << ", Distance: " << distance;
+        }
+        std::cout << std::endl;
+
+        // Add neighbors to priority queue
+        for (const auto& neighbor : adjacencyList.at(city)) {
+            if (visited.find(neighbor.first) == visited.end()) {
+                pq.push(std::make_pair(neighbor.second, neighbor.first));
+            }
+        }
+    }
+    std::cout << "Total Distance of Minimum Spanning Tree: " << totalDistance << std::endl;
+}
+
+// Function to perform BFS traversal
+void Graph::BFS(const std::string& startCity) const {
+    std::unordered_set<std::string> visited;
+    std::queue<std::string> q;
+
+    q.push(startCity);
+    visited.insert(startCity);
+
+    std::cout << "Breadth First Search traversal starting from " << startCity << ":" << std::endl;
+    while (!q.empty()) {
+        std::string city = q.front();
+        q.pop();
+        std::cout << city << " ";
+
+        for (const auto& neighbor : adjacencyList.at(city)) {
+            if (visited.find(neighbor.first) == visited.end()) {
+                q.push(neighbor.first);
+                visited.insert(neighbor.first);
+            }
+        }
+    }
+    std::cout << std::endl;
+}
+
+// Function to perform DFS traversal
+void Graph::DFS(const std::string& startCity) const {
+    std::unordered_set<std::string> visited;
+    std::stack<std::string> s;
+
+    s.push(startCity);
+
+    std::cout << "Depth First Search traversal starting from " << startCity << ":" << std::endl;
+    while (!s.empty()) {
+        std::string city = s.top();
+        s.pop();
+
+        if (visited.find(city) == visited.end()) {
+            std::cout << city << " ";
+            visited.insert(city);
+
+            for (const auto& neighbor : adjacencyList.at(city)) {
+                if (visited.find(neighbor.first) == visited.end()) {
+                    s.push(neighbor.first);
+                }
+            }
+        }
+    }
+    std::cout << std::endl;
 }
