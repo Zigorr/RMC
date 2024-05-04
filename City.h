@@ -5,13 +5,13 @@
 using namespace std;
 class City {
 private:
-	string cityname;
+	string cityName;
 	vector<Edge>edges;
 public:
 	City();
 	City(string cityname);
-	string getcityname();
-	void setcityname(string cityname);
-	vector<Edge>getedges();
-	void setedges(vector<Edge> v);
+	string getCityName();
+	void setCityName(string cityName);
+	vector<Edge>getEdges();
+	void setEdges(vector<Edge> v);
 };

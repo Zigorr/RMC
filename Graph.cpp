@@ -9,32 +9,32 @@
 using namespace std;
 vector<Edge> v;// temp vector
 City c;
-unordered_map<string, City> Graph::getmap()
+unordered_map<string, City> Graph::getMap()
 {
     return unordered_map<string, City>();
 }
 
-void Graph::setmap(unordered_map<string, City> map)
+void Graph::setMap(unordered_map<string, City> map)
 {
     cities = map;
 }
 void Graph::addCity(City city)
 {
-    if (cities.find(city.getcityname()) != cities.end())
+    if (cities.find(city.getCityName()) != cities.end())
     {
         cout << "City already exits" << endl;
     }
     else
     {
-        cities[city.getcityname()] = {}; //Initialize with an empty vector of edges
-        cout << city.getcityname() << " added successfully" << endl;
+        cities[city.getCityName()] = {}; //Initialize with an empty vector of edges
+        cout << city.getCityName() << " added successfully" << endl;
     }
 
 }
-void Graph::findcity(string start, string end)
+void Graph::findCity(string start, string end)
 {
     vector<Edge>temp;
-    v = c.getedges();
+    v = c.getEdges();
     string answer;
     if (cities.find(start) != cities.end())
     {
@@ -82,48 +82,48 @@ void Graph::addEdge(City start, City end, int weight)
         City c1(start); // ll constructor
         City c2(end);
        
-        findcity(c1.getcityname(), c2.getcityname());
+        findCity(c1.getCityName(), c2.getCityName());
 
-        Edge e(start.getcityname(), end.getcityname(), weight);
-        Edge e1(end.getcityname(), start.getcityname(), weight);
+        Edge e(start.getCityName(), end.getCityName(), weight);
+        Edge e1(end.getCityName(), start.getCityName(), weight);
 
-        v = c.getedges(); // v = edges
+        v = c.getEdges(); // v = edges
 
         v.push_back(e);
         v.push_back(e1);
 
-        c.setedges(v); // brg3 fy fy edges 
+        c.setEdges(v); // brg3 fy fy edges 
 
-        cities[c1.getcityname()] = { {c2} };
-        cities[c2.getcityname()] = { {c1} };
+        cities[c1.getCityName()] = { {c2} };
+        cities[c2.getCityName()] = { {c1} };
 
         vector<Edge>::iterator it;
         for (it = v.begin(); it != v.end(); it++)
         {
-            cout << "Start: " << it->getstartcity() << ", End: " << it->getendcity() << ", Weight: " << it->getweight() << endl;
+            cout << "Start: " << it->getStartCity() << ", End: " << it->getEndCity() << ", Weight: " << it->getWeight() << endl;
         }
 }
 void Graph::deleteCity(City city)
 {
-    string cityName = city.getcityname();
+    string cityName = city.getCityName();
     auto it = cities.find(cityName);
 
     if (it != cities.end())
     {
         cities.erase(it);
 
-        vector<Edge> edges = c.getedges();
+        vector<Edge> edges = c.getEdges();
         vector<Edge> tempEdges;
 
         for (auto it = edges.begin(); it != edges.end(); ++it)
         {
-            if (it->getstartcity() != cityName && it->getendcity() != cityName)
+            if (it->getStartCity() != cityName && it->getEndCity() != cityName)
             {
                 tempEdges.push_back(*it);
             }
         }
 
-        c.setedges(tempEdges);
+        c.setEdges(tempEdges);
         cout << "City " << cityName << " and its associated edges deleted successfully." << endl;
     }
     else
@@ -135,11 +135,11 @@ void Graph::deleteCity(City city)
 void Graph::deleteEdge(Edge e)
 {
     vector<Edge> temp;
-    v = c.getedges();
+    v = c.getEdges();
     bool edgeDeleted = false;
 
     for (auto it = v.begin(); it != v.end(); ++it) {
-        if (it->getstartcity() != e.getstartcity() || it->getendcity() != e.getendcity() || it->getweight() != e.getweight())
+        if (it->getStartCity() != e.getStartCity() || it->getEndCity() != e.getEndCity() || it->getWeight() != e.getWeight())
         {
             temp.push_back(*it);
         }
@@ -153,7 +153,7 @@ void Graph::deleteEdge(Edge e)
     {
         cout << "Edge deleted successfully." << endl;
         v = temp;
-        c.setedges(v);
+        c.setEdges(v);
     }
     else
     {
@@ -162,6 +162,6 @@ void Graph::deleteEdge(Edge e)
 
     cout << "Remaining edges:" << endl;
     for (auto it = v.begin(); it != v.end(); it++) {
-        cout << "Start: " << it->getstartcity() << " -> " << "End: " << it->getendcity() << " Weight: " << it->getweight() << endl;
+        cout << "Start: " << it->getStartCity() << " -> " << "End: " << it->getEndCity() << " Weight: " << it->getWeight() << endl;
     }
 }

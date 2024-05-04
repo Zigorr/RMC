@@ -4,29 +4,29 @@ using namespace std;
 
 Edge::Edge()
 {
-	startcity = "";
-	endcity = "";
+	startCity = "";
+	endCity = "";
 	weight = 0;
 }
 
 Edge::Edge(string startcity, string endcity, int weight)
 {
-	this->startcity = startcity;
-	this->endcity = endcity;
+	this->startCity = startcity;
+	this->endCity = endcity;
 	this->weight = weight;
 }
 
-string Edge::getstartcity()
+string Edge::getStartCity()
 {
-	return startcity;
+	return startCity;
 }
 
-string Edge::getendcity()
+string Edge::getEndCity()
 {
-	return endcity;
+	return endCity;
 }
 
-int Edge::getweight()
+int Edge::getWeight()
 {
 	return weight;
 }

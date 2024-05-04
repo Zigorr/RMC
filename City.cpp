@@ -4,30 +4,30 @@ using namespace std;
 
 City::City()
 {
-	cityname = "";
+	cityName = "";
 }
 
 City::City(string cityname)
 {
-	this->cityname = cityname;
+	this->cityName = cityname;
 }
 
-string City::getcityname()
+string City::getCityName()
 {
-	return cityname;
+	return cityName;
 }
 
-void City::setcityname(string cityname)
+void City::setCityName(string cityname)
 {
-	this->cityname = cityname;
+	this->cityName = cityname;
 }
 
-vector<Edge> City::getedges()
+vector<Edge> City::getEdges()
 {
 	return edges;
 }
 
-void City::setedges(vector<Edge> v)
+void City::setEdges(vector<Edge> v)
 {
 	 edges = v;
 }

@@ -34,7 +34,11 @@ void Menu::display()
         cout << "2. Add Edge" << endl;
         cout << "3. Delete City" << endl;
         cout << "4. Delete Edge" << endl;
-        cout << "5. find city" << endl;
+        cout << "5. Find City" << endl;
+        cout << "6. Display Graph Data" << endl;
+        cout << "7. Find and Display Minimum Spanning Tree" << endl;
+        cout << "8. Traverse Graph using Breadth First Search" << endl;
+        cout << "9. Traverse Graph using Depth First Search" << endl;
            cout << "0. Exit" << endl;
         cout << "Enter your choice: ";
         cin >> choice;
@@ -97,7 +101,7 @@ void Menu::display()
             cin >> city1;
             cin >> city2;
 
-            g.findcity(city1, city2);
+            g.findCity(city1, city2);
         }
         case 0:
             break;
