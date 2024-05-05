@@ -358,14 +358,16 @@ void Graph::dijkstra(string startCity) {
         pq.pop();
 
         // Visit neighbors
-        for (const auto& neighbor : adjacencyList.at(currentCity)) {
-            string neighborCity = neighbor.first;
-            int weight = neighbor.second;
+        if (adjacencyList.find(currentCity) != adjacencyList.end()) {
+            for (const auto& neighbor : adjacencyList.at(currentCity)) {
+                string neighborCity = neighbor.first;
+                int weight = neighbor.second;
 
-            // Update distance if shorter path found
-            if (currentDistance + weight < distance[neighborCity]) {
-                distance[neighborCity] = currentDistance + weight;
-                pq.push(make_pair(distance[neighborCity], neighborCity));
+                // Skip if the neighbor is already visited or not connected
+                if (distance[currentCity] + weight < distance[neighborCity]) {
+                    distance[neighborCity] = distance[currentCity] + weight;
+                    pq.push(make_pair(distance[neighborCity], neighborCity));
+                }
             }
         }
     }
@@ -373,7 +375,9 @@ void Graph::dijkstra(string startCity) {
     // Output distances
     cout << "Shortest distances from " << startCity << ":" << endl;
     for (const auto& dist : distance) {
-        cout << dist.first << ": " << dist.second << endl;
+        if (dist.second != INT_MAX) {
+            cout << dist.first << ": " << dist.second << endl;
+        }
     }
 }
 
