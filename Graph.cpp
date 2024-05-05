@@ -268,9 +268,11 @@ void Graph::DFS(const string& startCity) const {
             cout << city << " ";
             visited.insert(city);
 
-            for (const auto& neighbor : adjacencyList.at(city)) {
-                if (visited.find(neighbor.first) == visited.end()) {
-                    s.push(neighbor.first);
+            if (adjacencyList.find(city) != adjacencyList.end()) {
+                for (const auto& neighbor : adjacencyList.at(city)) {
+                    if (visited.find(neighbor.first) == visited.end()) {
+                        s.push(neighbor.first);
+                    }
                 }
             }
         }
