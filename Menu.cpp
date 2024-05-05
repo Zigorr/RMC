@@ -130,7 +130,6 @@ void Menu::display()
         default:
             cout << "Invalid choice. Please try again." << endl;
         }
-        cin.ignore();
     } while (choice != 0);
    
 }
