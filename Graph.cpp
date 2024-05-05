@@ -92,6 +92,12 @@ void Graph::addEdge(City start, City end, int weight)
 
     // Update the adjacency list for the start city
     adjacencyList[start.getCityName()].push_back(make_pair(end.getCityName(), weight));
+
+    // Add the reverse edge to the end city's edges
+    vector<Edge> endCityEdges = cities[end.getCityName()].getEdges();
+    Edge reverseEdge(end.getCityName(), start.getCityName(), weight);
+    endCityEdges.push_back(reverseEdge);
+    cities[end.getCityName()].setEdges(endCityEdges);
     adjacencyList[end.getCityName()].push_back(make_pair(start.getCityName(), weight));
 
     // Output the edges for verification
@@ -285,19 +291,17 @@ void Graph::displayGraphData()
     for (const auto& city : cities)
     {
         cout << city.first << ":" << endl;
+
+        // Display edges for the current city
         for (const auto& edge : city.second.getEdges())
         {
-            cout << "  - " << edge.getEndCity() << " (Weight: " << edge.getWeight() << ")" << endl;
+            if (edge.getEndCity() != city.first) {
+                cout << "  - " << edge.getEndCity() << " (Weight: " << edge.getWeight() << ")" << endl;
+            }
         }
 
-        // Display reverse edges
-        for (const auto& reverseEdge : cities[city.first].getEdges())
-        {
-            cout << "  - " << reverseEdge.getEndCity() << " (Weight: " << reverseEdge.getWeight() << ")" << endl;
-        }
         cout << endl;
     }
-
-    // Add a delay of 2 seconds before returning to the menu
-    std::this_thread::sleep_for(std::chrono::seconds(2));
+    this_thread::sleep_for(chrono::seconds(0));
 }
+
