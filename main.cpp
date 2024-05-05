@@ -40,19 +40,10 @@ int main() {
     City c;
     City c1;
     vector<City> cities;
-    Graph g;
     Menu m;
-    while (true) {
-        m.display();
-        if (g.displayGraphData() == true) {
-            // Continue the loop
-        }
-        else {
-            break; // Exit the loop
-        }
 
-    }
-
+    m.display();
+    
     return 0;
 }
    

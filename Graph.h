@@ -23,7 +23,7 @@ public:
 	void findMST() const; // Find MST using Prim's algorithm
 	void BFS(const string& startCity) const; // Perform Breadth First Search traversal
 	void DFS(const string& startCity) const; // Perform Depth First Search traversal
-	bool displayGraphData();
+	void displayGraphData();
 
 	//saveToFile();                  // Saves the graph data(cities and edges) to a file
 	//loadFromFile();               // Loads the graph data(cities and edges) from a file(You can implement this during program initialization)

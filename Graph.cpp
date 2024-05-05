@@ -272,12 +272,12 @@ void Graph::DFS(const string& startCity) const {
     cout << endl;
 }
 
-bool Graph::displayGraphData()
+void Graph::displayGraphData()
 {
     if (cities.empty())
     {
         cout << "Graph is empty." << endl;
-        return true; // Return true to indicate that the menu should be displayed again
+        return;
     }
 
     // Display cities and their edges
@@ -299,7 +299,5 @@ bool Graph::displayGraphData()
     }
 
     // Add a delay of 2 seconds before returning to the menu
-    std::this_thread::sleep_for(std::chrono::seconds(0));
-
-    return true; // Return true to indicate that the menu should be displayed again
+    std::this_thread::sleep_for(std::chrono::seconds(2));
 }
