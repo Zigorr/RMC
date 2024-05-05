@@ -40,11 +40,18 @@ int main() {
     City c;
     City c1;
     vector<City> cities;
+    Graph g;
     Menu m;
-    m.display();
-    Edge  e("cairo", "alex", 200);
-    // e.addEdge("cairo", "alex", 220,cities);
+    while (true) {
+        m.display();
+        if (g.displayGraphData() == true) {
+            // Continue the loop
+        }
+        else {
+            break; // Exit the loop
+        }
 
+    }
 
     return 0;
 }

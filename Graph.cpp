@@ -9,6 +9,8 @@
 #include <stack>
 #include <unordered_set>
 #include <queue>
+#include <chrono>
+#include <thread>
 using namespace std;
 vector<Edge> v;// temp vector
 City c;
@@ -34,18 +36,12 @@ void Graph::addCity(City city)
     }
 
 }
-void Graph::findCity(string start, string end)
+void Graph::findCity(string start,string end)
 {
-    vector<Edge>temp;
-    v = c.getEdges();
     string answer;
-    if (cities.find(start) != cities.end())
+    if (cities.find(start) == cities.end())
     {
-        cout << start << " exists" << endl;
-    }
-    else
-    {
-        cout << start << " does not exist" << endl;
+        cout << start << " does not exist." << endl;
         cout << "Do you want to add " << start << "?" << endl;
         cin >> answer;
         if (answer == "Yes" || answer == "yes")
@@ -55,57 +51,57 @@ void Graph::findCity(string start, string end)
         }
         else
         {
-            Menu m;
-            m.display();
+            cout << "Returning to menu." << endl;
+            return;
         }
     }
-    if (cities.find(end) != cities.end())
+
+    if (cities.find(end) == cities.end())
     {
-        cout << end << " exists" << endl;
-    }
-    else
-    {
-        cout << end << " does not exist" << endl;
+        cout << end << " does not exist." << endl;
         cout << "Do you want to add " << end << "?" << endl;
         cin >> answer;
-        if (answer == "Yes" ||  answer == "yes")
+        if (answer == "Yes" || answer == "yes")
         {
-            City c2(end);
-            addCity(c2);
+            City c(end);
+            addCity(c);
         }
         else
         {
-            Menu m;
-            m.display();
+            cout << "Returning to menu." << endl;
+            return;
         }
     }
+
+    cout << start << " and " << end << " exist." << endl;
 }
 void Graph::addEdge(City start, City end, int weight)
 {
-        City c1(start); // ll constructor
-        City c2(end);
-       
-        findCity(c1.getCityName(), c2.getCityName());
+    // Check if start and end cities exist in the graph, add them if they don't
+    findCity(start.getCityName(), end.getCityName());
 
-        Edge e(start.getCityName(), end.getCityName(), weight);
-        Edge e1(end.getCityName(), start.getCityName(), weight);
+    // Retrieve the edges of the start city
+    vector<Edge> startCityEdges = cities[start.getCityName()].getEdges();
 
-        v = c.getEdges(); // v = edges
+    // Create the new edge
+    Edge newEdge(start.getCityName(), end.getCityName(), weight);
 
-        v.push_back(e);
-        v.push_back(e1);
+    // Add the new edge to the start city's edges
+    startCityEdges.push_back(newEdge);
+    cities[start.getCityName()].setEdges(startCityEdges);
 
-        c.setEdges(v); // brg3 fy fy edges 
+    // Update the adjacency list for the start city
+    adjacencyList[start.getCityName()].push_back(make_pair(end.getCityName(), weight));
+    adjacencyList[end.getCityName()].push_back(make_pair(start.getCityName(), weight));
 
-        cities[c1.getCityName()] = { {c2} };
-        cities[c2.getCityName()] = { {c1} };
-
-        vector<Edge>::iterator it;
-        for (it = v.begin(); it != v.end(); it++)
-        {
-            cout << "Start: " << it->getStartCity() << ", End: " << it->getEndCity() << ", Weight: " << it->getWeight() << endl;
-        }
+    // Output the edges for verification
+    cout << "Edges after adding new edge:" << endl;
+    for (const auto& edge : startCityEdges)
+    {
+        cout << "Start: " << edge.getStartCity() << ", End: " << edge.getEndCity() << ", Weight: " << edge.getWeight() << endl;
+    }
 }
+
 void Graph::deleteCity(City city)
 {
     string cityName = city.getCityName();
@@ -173,8 +169,7 @@ void Graph::findMST() const {
         cout << "Graph is empty. Cannot find Minimum Spanning Tree." << endl;
         return;
     }
-    
-    
+
     unordered_set<string> visited;
     priority_queue<pair<int, string>, vector<pair<int, string>>, greater<pair<int, string>>> pq;
 
@@ -201,6 +196,12 @@ void Graph::findMST() const {
         }
         cout << endl;
 
+        // Check if city exists in the adjacency list
+        if (adjacencyList.find(city) == adjacencyList.end()) {
+            cout << "Error: Adjacency list for city " << city << " not found." << endl;
+            break;
+        }
+
         // Add neighbors to priority queue
         for (const auto& neighbor : adjacencyList.at(city)) {
             if (visited.find(neighbor.first) == visited.end()) {
@@ -211,12 +212,14 @@ void Graph::findMST() const {
     cout << "Total Distance of Minimum Spanning Tree: " << totalDistance << endl;
 }
 
+
 // Function to perform BFS traversal
 void Graph::BFS(const string& startCity) const {
     if (cities.find(startCity) == cities.end()) {
-        cout << "City " << startCity << " Does not exist in the graph." << endl;
+        cout << "City " << startCity << " does not exist in the graph." << endl;
         return;
     }
+
     unordered_set<string> visited;
     queue<string> q;
 
@@ -229,10 +232,10 @@ void Graph::BFS(const string& startCity) const {
         q.pop();
         cout << city << " ";
 
-        for (const auto& neighbor : adjacencyList.at(city)) {
-            if (visited.find(neighbor.first) == visited.end()) {
-                q.push(neighbor.first);
-                visited.insert(neighbor.first);
+        for (const auto& neighbor : cities.at(city).getEdges()) {
+            if (visited.find(neighbor.getEndCity()) == visited.end()) {
+                q.push(neighbor.getEndCity());
+                visited.insert(neighbor.getEndCity());
             }
         }
     }
@@ -268,18 +271,35 @@ void Graph::DFS(const string& startCity) const {
     }
     cout << endl;
 }
-void Graph::displayGraphData() {
-    if (cities.empty()) {
+
+bool Graph::displayGraphData()
+{
+    if (cities.empty())
+    {
         cout << "Graph is empty." << endl;
-        return;
+        return true; // Return true to indicate that the menu should be displayed again
     }
 
-    cout << "Graph Data:" << endl;
-    for (const auto& city : cities) {
-        cout << "City: " << city.first << endl;
-        cout << "Edges:" << endl;
-        for (const auto& edge : city.second.getEdges()) {
-            cout << "   Start: " << edge.getStartCity() << ", End: " << edge.getEndCity() << ", Weight: " << edge.getWeight() << endl;
+    // Display cities and their edges
+    cout << "Cities in the graph:" << endl;
+    for (const auto& city : cities)
+    {
+        cout << city.first << ":" << endl;
+        for (const auto& edge : city.second.getEdges())
+        {
+            cout << "  - " << edge.getEndCity() << " (Weight: " << edge.getWeight() << ")" << endl;
         }
+
+        // Display reverse edges
+        for (const auto& reverseEdge : cities[city.first].getEdges())
+        {
+            cout << "  - " << reverseEdge.getEndCity() << " (Weight: " << reverseEdge.getWeight() << ")" << endl;
+        }
+        cout << endl;
     }
+
+    // Add a delay of 2 seconds before returning to the menu
+    std::this_thread::sleep_for(std::chrono::seconds(0));
+
+    return true; // Return true to indicate that the menu should be displayed again
 }

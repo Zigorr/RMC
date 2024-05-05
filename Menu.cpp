@@ -42,8 +42,6 @@ void Menu::display()
            cout << "0. Exit" << endl;
         cout << "Enter your choice: ";
         cin >> choice;
-        cin.clear();
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
         switch (choice) {
         case 1 : {
@@ -132,6 +130,7 @@ void Menu::display()
         default:
             cout << "Invalid choice. Please try again." << endl;
         }
+        cin.ignore();
     } while (choice != 0);
    
 }
