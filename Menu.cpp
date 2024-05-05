@@ -2,6 +2,7 @@
 #include <vector>
 #include "Menu.h"
 #include "Files.h"
+#include "GraphVisualizer.h"
 #include "City.h"
 #include "Graph.h"
 #include "Edge.h"
@@ -9,7 +10,6 @@
 #include<iostream>
 #include<string>
 #include "Files.cpp"
-
 using namespace std;
 
 void Menu::display()
@@ -39,6 +39,7 @@ void Menu::display()
         cout << "7. Find and Display Minimum Spanning Tree" << endl;
         cout << "8. Traverse Graph using Breadth First Search" << endl;
         cout << "9. Traverse Graph using Depth First Search" << endl;
+        cout << "10. Visualize The Graph" << endl;
            cout << "0. Exit" << endl;
         cout << "Enter your choice: ";
         cin >> choice;
@@ -123,6 +124,11 @@ void Menu::display()
             cout << "Enter starting city for DFS:" << endl;
             cin >> startCity;
             g.DFS(startCity);
+            break;
+        }
+        case 10: {
+            graphVisualizer visualizer;
+            visualizer.visualize(g);
             break;
         }
         case 0:

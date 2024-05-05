@@ -1,5 +1,6 @@
 #include "Graph.h"
 #include "Menu.h"
+#include "GraphVisualizer.h"
 #include <iostream>
 #include <string>
 #include <vector>
@@ -14,9 +15,10 @@
 using namespace std;
 vector<Edge> v;// temp vector
 City c;
-unordered_map<string, City> Graph::getMap()
+unordered_map<string, City> Graph::getMap() const
 {
     return unordered_map<string, City>();
+    return cities;
 }
 
 void Graph::setMap(unordered_map<string, City> map)
@@ -308,30 +310,28 @@ void Graph::DFS(const string& startCity) const {
 }
 
 
-void Graph::displayGraphData()
-{
-    if (cities.empty())
-    {
+void Graph::displayGraphData() {
+    if (cities.empty()) {
+        
+        
+        
         cout << "Graph is empty." << endl;
         return;
     }
 
     // Display cities and their edges
     cout << "Cities in the graph:" << endl;
-    for (const auto& city : cities)
-    {
+    for (const auto& city : cities) {
         cout << city.first << ":" << endl;
-
-        // Display edges for the current city
-        for (const auto& edge : city.second.getEdges())
-        {
+        for (const auto& edge : city.second.getEdges()) {
             if (edge.getEndCity() != city.first) {
                 cout << "  - " << edge.getEndCity() << " (Weight: " << edge.getWeight() << ")" << endl;
             }
         }
-
         cout << endl;
     }
-    this_thread::sleep_for(chrono::seconds(0));
+
+    // Visualize the graph
+    graphVisualizer::visualize(*this);
 }
 

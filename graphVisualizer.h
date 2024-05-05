@@ -1,4 +1,3 @@
-// GraphVisualizer.h
 #pragma once
 #include "Graph.h"
 
