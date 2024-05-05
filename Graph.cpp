@@ -38,7 +38,7 @@ void Graph::addCity(City city)
     }
 
 }
-void Graph::findCity(string start,string end)
+void Graph::findCity(string start, string end)
 {
     string answer;
     if (cities.find(start) == cities.end())
@@ -312,9 +312,9 @@ void Graph::DFS(const string& startCity) const {
 
 void Graph::displayGraphData() {
     if (cities.empty()) {
-        
-        
-        
+
+
+
         cout << "Graph is empty." << endl;
         return;
     }
@@ -333,5 +333,47 @@ void Graph::displayGraphData() {
 
     // Visualize the graph
     graphVisualizer::visualize(*this);
+}
+void Graph::dijkstra(string startCity) {
+    if (cities.find(startCity) == cities.end()) {
+        cout << "City " << startCity << " does not exist in the graph." << endl;
+        return;
+    }
+
+    // Initialize distances
+    unordered_map<string, int> distance;
+    for (const auto& city : cities) {
+        distance[city.first] = INT_MAX;
+    }
+    distance[startCity] = 0;
+
+    // Priority queue to store vertices and their distances
+    priority_queue<pair<int, string>, vector<pair<int, string>>, greater<pair<int, string>>> pq;
+    pq.push(make_pair(0, startCity));
+
+    // Process vertices
+    while (!pq.empty()) {
+        string currentCity = pq.top().second;
+        int currentDistance = pq.top().first;
+        pq.pop();
+
+        // Visit neighbors
+        for (const auto& neighbor : adjacencyList.at(currentCity)) {
+            string neighborCity = neighbor.first;
+            int weight = neighbor.second;
+
+            // Update distance if shorter path found
+            if (currentDistance + weight < distance[neighborCity]) {
+                distance[neighborCity] = currentDistance + weight;
+                pq.push(make_pair(distance[neighborCity], neighborCity));
+            }
+        }
+    }
+
+    // Output distances
+    cout << "Shortest distances from " << startCity << ":" << endl;
+    for (const auto& dist : distance) {
+        cout << dist.first << ": " << dist.second << endl;
+    }
 }
 
