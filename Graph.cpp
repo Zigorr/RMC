@@ -80,6 +80,23 @@ void Graph::addEdge(City start, City end, int weight)
     // Check if start and end cities exist in the graph, add them if they don't
     findCity(start.getCityName(), end.getCityName());
 
+    // Check if the edge already exists
+    bool edgeExists = false;
+    for (const auto& edge : cities[start.getCityName()].getEdges())
+    {
+        if (edge.getEndCity() == end.getCityName())
+        {
+            edgeExists = true;
+            break;
+        }
+    }
+
+    if (edgeExists)
+    {
+        cout << "Edge between " << start.getCityName() << " and " << end.getCityName() << " already exists." << endl;
+        return;
+    }
+
     // Retrieve the edges of the start city
     vector<Edge> startCityEdges = cities[start.getCityName()].getEdges();
 
@@ -177,46 +194,51 @@ void Graph::findMST() const {
     }
 
     unordered_set<string> visited;
-    priority_queue<pair<int, string>, vector<pair<int, string>>, greater<pair<int, string>>> pq;
+    priority_queue<pair<int, pair<string, string>>, vector<pair<int, pair<string, string>>>, greater<pair<int, pair<string, string>>>> pq;
 
-    // Start with first city
-    pq.push(make_pair(0, cities.begin()->first));
+    // Start with an arbitrary city (e.g., the first city)
+    string startCity = cities.begin()->first;
+    visited.insert(startCity);
+
+    // Add all edges from the start city to the priority queue
+    for (const auto& neighbor : adjacencyList.at(startCity)) {
+        pq.push(make_pair(neighbor.second, make_pair(startCity, neighbor.first)));
+    }
 
     int totalDistance = 0;
     cout << "Minimum Spanning Tree:" << endl;
-    while (!pq.empty()) {
-        string city = pq.top().second;
-        int distance = pq.top().first;
+    while (!pq.empty() && visited.size() < cities.size()) {
+        auto edge = pq.top();
         pq.pop();
 
-        // If city already visited, skip
-        if (visited.find(city) != visited.end()) {
-            continue;
+        int distance = edge.first;
+        string fromCity = edge.second.first;
+        string toCity = edge.second.second;
+
+        if (visited.find(toCity) != visited.end()) {
+            continue; // Skip if the destination city is already visited
         }
 
-        visited.insert(city);
+        visited.insert(toCity);
         totalDistance += distance;
-        cout << "From: " << city;
-        if (city != cities.begin()->first) {
-            cout << ", Distance: " << distance;
-        }
-        cout << endl;
+        cout << "From: " << fromCity << " to " << toCity << ", Distance: " << distance << endl;
 
-        // Check if city exists in the adjacency list
-        if (adjacencyList.find(city) == adjacencyList.end()) {
-            cout << "Error: Adjacency list for city " << city << " not found." << endl;
-            break;
-        }
-
-        // Add neighbors to priority queue
-        for (const auto& neighbor : adjacencyList.at(city)) {
+        // Add edges from the newly visited city to the priority queue
+        for (const auto& neighbor : adjacencyList.at(toCity)) {
             if (visited.find(neighbor.first) == visited.end()) {
-                pq.push(make_pair(neighbor.second, neighbor.first));
+                pq.push(make_pair(neighbor.second, make_pair(toCity, neighbor.first)));
             }
         }
     }
+
+    if (visited.size() < cities.size()) {
+        cout << "Graph is not connected. Minimum Spanning Tree not found." << endl;
+        return;
+    }
+
     cout << "Total Distance of Minimum Spanning Tree: " << totalDistance << endl;
 }
+
 
 
 // Function to perform BFS traversal
@@ -238,15 +260,19 @@ void Graph::BFS(const string& startCity) const {
         q.pop();
         cout << city << " ";
 
-        for (const auto& neighbor : cities.at(city).getEdges()) {
-            if (visited.find(neighbor.getEndCity()) == visited.end()) {
-                q.push(neighbor.getEndCity());
-                visited.insert(neighbor.getEndCity());
+        // Get neighbors from adjacency list instead of assuming outgoing edges
+        if (adjacencyList.find(city) != adjacencyList.end()) {
+            for (const auto& neighbor : adjacencyList.at(city)) {
+                if (visited.find(neighbor.first) == visited.end()) {
+                    q.push(neighbor.first);
+                    visited.insert(neighbor.first);
+                }
             }
         }
     }
     cout << endl;
 }
+
 
 // Function to perform DFS traversal
 void Graph::DFS(const string& startCity) const {
@@ -268,7 +294,8 @@ void Graph::DFS(const string& startCity) const {
             cout << city << " ";
             visited.insert(city);
 
-            if (adjacencyList.find(city) != adjacencyList.end()) {
+            // Check if the city has neighbors before accessing adjacencyList
+            if (cities.find(city) != cities.end() && adjacencyList.find(city) != adjacencyList.end()) {
                 for (const auto& neighbor : adjacencyList.at(city)) {
                     if (visited.find(neighbor.first) == visited.end()) {
                         s.push(neighbor.first);
@@ -279,6 +306,7 @@ void Graph::DFS(const string& startCity) const {
     }
     cout << endl;
 }
+
 
 void Graph::displayGraphData()
 {
