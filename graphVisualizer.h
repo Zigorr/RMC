@@ -3,5 +3,5 @@
 
 class graphVisualizer {
 public:
-    static void visualize(const Graph& graph);
+    static void visualize( Graph graph);
 };
