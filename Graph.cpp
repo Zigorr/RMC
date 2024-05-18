@@ -390,90 +390,55 @@ void Graph::dijkstra(string startCity) {
         }
     }
 }
-//void Graph::writeToFile(const std::string& filename) const {
-//    std::ofstream file(filename);
-//    if (file.is_open()) {
-//        for (const auto& graphPair : graphs) {
-//            int graphIndex = graphPair.first;
-//            const Graph& graph = graphPair.second;
-//
-//            std::cout << "Writing Graph " << graphIndex << " to file..." << std::endl;
-//            file << graphIndex << std::endl;
-//
-//            for (const auto& cityPair : graph.getCities()) {
-//                const City& city = cityPair.second;
-//                file << city.getCityName() << std::endl;
-//
-//                const auto& edges = city.getEdges();
-//                file << edges.size() << std::endl;
-//                for (const auto& edge : edges) {
-//                    file << edge.getStartCity() << std::endl
-//                        << edge.getEndCity() << std::endl
-//                        << edge.getWeight() << std::endl;
-//                }
-//                file << std::endl; // Add empty line to separate each city's data
-//            }
-//        }
-//        file.close();
-//        std::cout << "Graph data written to file: " << filename << std::endl;
-//    }
-//    else {
-//        std::cout << "Unable to open file: " << filename << std::endl;
-//    }
-//}
-//
-//std::unordered_map<int, Graph> Graph::readFromFile(const std::string& filename) {
-//    std::ifstream file(filename);
-//    if (!file.is_open()) {
-//        std::cout << "Unable to open file: " << filename << std::endl;
-//        return {}; // Return an empty map on failure to open file
-//    }
-//
-//    std::unordered_map<int, Graph> graphs; // Create a local map to hold the graph data
-//    int graphIndex;
-//    while (file >> graphIndex) {
-//        Graph currentGraph;
-//        std::string cityName;
-//
-//        // To consume the newline character after the graph index
-//        file.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-//
-//        while (std::getline(file, cityName)) {
-//            if (cityName.empty()) {
-//                break; // Stop if we find an empty line indicating the end of city data for this graph
-//            }
-//
-//            City currentCity;
-//            currentCity.setCityName(cityName);
-//
-//            int edgeCount;
-//            file >> edgeCount;
-//
-//            // To consume the newline character after the edge count
-//            file.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-//
-//            for (int i = 0; i < edgeCount; ++i) {
-//                std::string startCity, endCity;
-//                int weight;
-//
-//                std::getline(file, startCity);
-//                std::getline(file, endCity);
-//                file >> weight;
-//
-//                // To consume the newline character after the weight
-//                file.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-//
-//                Edge edge(startCity, endCity, weight);
-//                currentCity.getEdges().push_back(edge);
-//            }
-//
-//            currentGraph.addCity(currentCity);
-//        }
-//        graphs[graphIndex] = currentGraph;
-//    }
-//    file.close();
-//    std::cout << "Graph data read from file: " << filename << std::endl;
-//    return graphs; // Return the map of graphs
-//}
+void Graph::saveGraphToFile(const std::string& filename) const {
+    std::ofstream file(filename);
+    if (!file.is_open()) {
+        std::cout << "Unable to open file for writing: " << filename << std::endl;
+        return;
+    }
 
+    for (const auto& cityPair : cities) {
+        const City& city = cityPair.second;
+        file << city.getCityName() << std::endl;
+        const auto& edges = city.getEdges();
+        file << edges.size() << std::endl;
+        for (const auto& edge : edges) {
+            file << edge.getEndCity() << ',' << edge.getWeight() << std::endl;
+        }
+    }
 
+    file.close();
+}
+void Graph::loadGraphFromFile(const std::string& filename) {
+    std::ifstream file(filename);
+    if (!file.is_open()) {
+        std::cout << "Unable to open file for reading: " << filename << std::endl;
+        return;
+    }
+
+    std::string line;
+    while (std::getline(file, line)) {
+        std::string cityName = line;
+        City city(cityName);
+        addCity(city);
+
+        size_t edgeCount;
+        file >> edgeCount;
+        file.ignore(); // Skip to the next line after reading a number
+
+        for (size_t i = 0; i < edgeCount; ++i) {
+            std::getline(file, line);
+            std::istringstream iss(line);
+            std::string endCity;
+            int weight;
+            if (std::getline(iss, endCity, ',') && (iss >> weight)) {
+                addEdge(cityName, endCity, weight);
+            }
+        }
+
+        // Skip any trailing newline to prepare for the next city
+        file.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    }
+
+    file.close();
+}

@@ -25,8 +25,8 @@ public:
     void dijkstra(string startCity);
     unordered_map<int, Graph> getGraph();
     void setGraph(unordered_map<int, Graph> graph);
-    void writeToFile(const string& filename);
-    unordered_map<int, Graph> readFromFile(const string& filename );
+    void saveGraphToFile(const std::string& filename) const;
+    void loadGraphFromFile(const std::string& filename);
       
 private:
     unordered_map<string,City> cities;

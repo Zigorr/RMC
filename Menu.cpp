@@ -13,11 +13,11 @@ void Menu::display() {
     int choice;
     string cityname;
     Graph g;
-    //string filename = "graph_data.txt";
+    string filename = "graph_data.txt";
     int indexg = 1;
     unordered_map<int, Graph> graphMap;
- 
-   /*graphMap = g.readFromFile(filename);*/
+
+    g.loadGraphFromFile("graph_data.txt");
 
     do {
         
@@ -245,11 +245,11 @@ void Menu::display() {
         }
         case 0:
             cout << "Exiting program." << endl;
+            g.saveGraphToFile("graph_data.txt");
             break;
         default:
             cout << "Invalid choice. Please try again." << endl;
         }
         g.setGraph(graphMap);
     } while (choice != 0);
-    /*g.writeToFile(filename);*/
 }
