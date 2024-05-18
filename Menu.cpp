@@ -13,11 +13,11 @@ void Menu::display() {
     int choice;
     string cityname;
     Graph g;
-    string filename = "graph_data.txt";
+    //string filename = "graph_data.txt";
     int indexg = 1;
     unordered_map<int, Graph> graphMap;
  
-   graphMap = g.readFromFile(filename);
+   /*graphMap = g.readFromFile(filename);*/
 
     do {
         
@@ -251,5 +251,5 @@ void Menu::display() {
         }
         g.setGraph(graphMap);
     } while (choice != 0);
-    g.writeToFile(filename);
+    /*g.writeToFile(filename);*/
 }
