@@ -390,7 +390,7 @@ void Graph::dijkstra(string startCity) {
         }
     }
 }
-void Graph::saveGraphToFile(const std::string& filename) const {
+void Graph::saveGraphToFile(const std::string& filename) {
     std::ofstream file(filename);
     if (!file.is_open()) {
         std::cout << "Unable to open file for writing: " << filename << std::endl;
@@ -398,16 +398,16 @@ void Graph::saveGraphToFile(const std::string& filename) const {
     }
 
     for (const auto& cityPair : cities) {
-        const City& city = cityPair.second;
-        file << city.getCityName() << std::endl;
-        const auto& edges = city.getEdges();
-        file << edges.size() << std::endl;
+        file << cityPair.first << std::endl; // City name
+        const auto& edges = cityPair.second.getEdges();
+        file << edges.size() << std::endl; // Number of edges for the city
         for (const auto& edge : edges) {
-            file << edge.getEndCity() << ',' << edge.getWeight() << std::endl;
+            file << edge.getEndCity() << " " << edge.getWeight() << std::endl;
         }
     }
 
     file.close();
+    std::cout << "Graph data has been saved to " << filename << std::endl;
 }
 void Graph::loadGraphFromFile(const std::string& filename) {
     std::ifstream file(filename);
@@ -416,29 +416,22 @@ void Graph::loadGraphFromFile(const std::string& filename) {
         return;
     }
 
-    std::string line;
-    while (std::getline(file, line)) {
-        std::string cityName = line;
+    std::string cityName;
+    while (file >> cityName) {
+        int edgesCount;
+        file >> edgesCount;
         City city(cityName);
-        addCity(city);
+        this->addCity(city);
 
-        size_t edgeCount;
-        file >> edgeCount;
-        file.ignore(); // Skip to the next line after reading a number
-
-        for (size_t i = 0; i < edgeCount; ++i) {
-            std::getline(file, line);
-            std::istringstream iss(line);
-            std::string endCity;
+        for (int i = 0; i < edgesCount; ++i) {
+            std::string endCityName;
             int weight;
-            if (std::getline(iss, endCity, ',') && (iss >> weight)) {
-                addEdge(cityName, endCity, weight);
-            }
+            file >> endCityName >> weight;
+            City endCity(endCityName);
+            this->addEdge(city, endCity, weight);
         }
-
-        // Skip any trailing newline to prepare for the next city
-        file.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     }
 
     file.close();
+    std::cout << "Graph data has been loaded from " << filename << std::endl;
 }

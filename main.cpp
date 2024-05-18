@@ -13,6 +13,16 @@ int main() {
  
 
     Menu m;
+    Graph myGraph;
+    std::string filename = "graph_data.txt";
+
+    // Load graph data at the start
+    myGraph.loadGraphFromFile(filename);
+
+    // Your application logic here (including the menu system)
+
+    // Save graph data before exiting
+    myGraph.saveGraphToFile(filename);
     m.display();
     
     return 0;
