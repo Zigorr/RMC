@@ -1,6 +1,5 @@
-#include<iostream>
+#include <iostream>
 #include <vector>
-#include <unordered_map>
 #include <string>
 #include "Menu.h"
 #include "City.h"
@@ -14,13 +13,11 @@ void Menu::display() {
     string cityname;
     Graph g;
     string filename = "graph_data.txt";
-    int indexg = 1;
-    unordered_map<int, Graph> graphMap;
-
-    g.loadGraphFromFile("graph_data.txt");
+    vector<Graph> graphList;
+    g.loadGraphFromFile(filename);
+    graphList = g.getGraphs();
 
     do {
-
         cout << "\nMenu:" << endl;
         cout << "1. Add Graph" << endl;
         cout << "2. Display Graph" << endl;
@@ -29,9 +26,10 @@ void Menu::display() {
         cout << "5. Traverse Graph using Breadth First Search" << endl;
         cout << "6. Traverse Graph using Depth First Search" << endl;
         cout << "7. Dijkstra's Algorithm" << endl;
+        cout << "8. Graph Visualization" << endl;
         cout << "0. Exit" << endl;
         cout << "Enter your choice: ";
-        while (!(cin >> choice) || choice < 0 || choice > 7) {
+        while (!(cin >> choice) || choice < 0 || choice > 8) {
             cout << "Invalid input. Please enter a valid choice: ";
             cin.clear();
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
@@ -61,195 +59,175 @@ void Menu::display() {
                 cin >> s;
             } while (s == "yes" || s == "Yes");
 
-            graphMap[indexg] = newGraph;
-            indexg++;
+            graphList.push_back(newGraph);
             break;
         }
         case 2: {
             int graphIndex;
             cout << "Enter the index of Graph you want to display: ";
-            while (!(cin >> graphIndex)) {
+            while (!(cin >> graphIndex) || graphIndex < 1 || graphIndex > graphList.size()) {
                 cout << "Invalid input. Please enter a valid index: ";
                 cin.clear();
                 cin.ignore(numeric_limits<streamsize>::max(), '\n');
             }
-            if ((graphMap.find(graphIndex) != graphMap.end()))
-            {
-                graphMap[graphIndex].displayGraphData();
-            }
-            else {
-                cout << "Graph with index " << graphIndex << " does not exist." << endl;
-            }
+            graphList[graphIndex - 1].displayGraphData();
             break;
         }
         case 3: {
             int graphIndex;
             cout << "Enter the index of Graph you want to update: ";
-            while (!(cin >> graphIndex)) {
+            while (!(cin >> graphIndex) || graphIndex < 1 || graphIndex > graphList.size()) {
                 cout << "Invalid input. Please enter a valid index: ";
                 cin.clear();
                 cin.ignore(numeric_limits<streamsize>::max(), '\n');
             }
-            if (graphMap.find(graphIndex) != graphMap.end()) {
-                int updateChoice;
-                cout << "1. Add New City" << endl;
-                cout << "2. Add New Edge" << endl;
-                cout << "3. Delete City" << endl;
-                cout << "4. Delete Edge" << endl;
-                cout << "Enter your choice: ";
-                while (!(cin >> updateChoice) || updateChoice < 1 || updateChoice > 4) {
-                    cout << "Invalid input. Please enter a valid choice: ";
-                    cin.clear();
-                    cin.ignore(numeric_limits<streamsize>::max(), '\n');
-                }
-                switch (updateChoice) {
-                case 1: {
-                    cout << "Enter the city name: ";
-                    cin >> cityname;
-                    City city(cityname);
-                    graphMap[graphIndex].addCity(city);
-                    string city2, s;
-                    do {
-                        int weight;
-                        cout << "Enter EndCity : ";
-                        cin >> city2;
-                        cout << "Enter edge weight: ";
-                        cin >> weight;
-                        graphMap[graphIndex].addEdge(cityname, city2, weight);
-                        cout << "Do you want to add another edge? (yes/no): ";
-                        cin >> s;
-                    } while (s == "yes" || s == "Yes");
-                    break;
-                }
-                case 2: {
-                    string city1, city2, s;
-                    do {
-                        int weight;
-                        cout << "Enter city 1: ";
-                        cin >> city1;
-                        cout << "Enter city 2: ";
-                        cin >> city2;
-                        cout << "Enter edge weight: ";
-                        cin >> weight;
-                        graphMap[graphIndex].addEdge(city1, city2, weight);
-                        cout << "Do you want to add another edge? (yes/no): ";
-                        cin >> s;
-                    } while (s == "yes" || s == "Yes");
-                    break;
-                }
-                case 3: {
-                    string city;
-                    cout << "Enter the city name to delete: ";
-                    cin >> city;
-                    graphMap[graphIndex].deleteCity(city);
-                    break;
-                }
-                case 4: {
-                    string city1, city2;
-                    int weight;
-                    cout << "Enter two cities of the edge you want to delete: " << endl;
-                    cout << "City 1: ";
-                    cin >> city1;
-                    cout << "City 2: ";
-                    cin >> city2;
-                    cout << "Weight: ";
-                    cin >> weight;
-                    Edge edge(city1, city2, weight);
-                    graphMap[graphIndex].deleteEdge(edge);
-                    break;
-                }
-                default:
-                    cout << "Invalid choice. Please try again." << endl;
-                }
+
+            int updateChoice;
+            cout << "1. Add New City" << endl;
+            cout << "2. Add New Edge" << endl;
+            cout << "3. Delete City" << endl;
+            cout << "4. Delete Edge" << endl;
+            cout << "Enter your choice: ";
+            while (!(cin >> updateChoice) || updateChoice < 1 || updateChoice > 4) {
+                cout << "Invalid input. Please enter a valid choice: ";
+                cin.clear();
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
             }
-            else {
-                cout << "Graph with index " << graphIndex << " does not exist." << endl;
+
+            switch (updateChoice) {
+            case 1: {
+                cout << "Enter the city name: ";
+                cin >> cityname;
+                City city(cityname);
+                graphList[graphIndex - 1].addCity(city);
+                string city2, s;
+                do {
+                    int weight;
+                    cout << "Enter EndCity : ";
+                    cin >> city2;
+                    cout << "Enter edge weight: ";
+                    cin >> weight;
+                    graphList[graphIndex - 1].addEdge(cityname, city2, weight);
+                    cout << "Do you want to add another edge? (yes/no): ";
+                    cin >> s;
+                } while (s == "yes" || s == "Yes");
+                break;
+            }
+            case 2: {
+                string city1, city2, s;
+                do {
+                    int weight;
+                    cout << "Enter city 1: ";
+                    cin >> city1;
+                    cout << "Enter city 2: ";
+                    cin >> city2;
+                    cout << "Enter edge weight: ";
+                    cin >> weight;
+                    graphList[graphIndex - 1].addEdge(city1, city2, weight);
+                    cout << "Do you want to add another edge? (yes/no): ";
+                    cin >> s;
+                } while (s == "yes" || s == "Yes");
+                break;
+            }
+            case 3: {
+                string city;
+                cout << "Enter the city name to delete: ";
+                cin >> city;
+                graphList[graphIndex - 1].deleteCity(city);
+                break;
+            }
+            case 4: {
+                string city1, city2;
+                int weight;
+                cout << "Enter two cities of the edge you want to delete: " << endl;
+                cout << "City 1: ";
+                cin >> city1;
+                cout << "City 2: ";
+                cin >> city2;
+                cout << "Weight: ";
+                cin >> weight;
+                Edge edge(city1, city2, weight);
+                graphList[graphIndex - 1].deleteEdge(edge);
+                break;
+            }
+            default:
+                cout << "Invalid choice. Please try again." << endl;
             }
             break;
         }
         case 4: {
             int graphIndex;
-            cout << "Enter the index of Graph you want to display: ";
-            while (!(cin >> graphIndex)) {
+            cout << "Enter the index of Graph to get its minimum spanning tree: ";
+            while (!(cin >> graphIndex) || graphIndex < 1 || graphIndex > graphList.size()) {
                 cout << "Invalid input. Please enter a valid index: ";
                 cin.clear();
                 cin.ignore(numeric_limits<streamsize>::max(), '\n');
             }
-            if (graphMap.find(graphIndex) != graphMap.end()) {
-                graphMap[graphIndex].findMST();
-            }
-            else {
-                cout << "Graph with index " << graphIndex << " does not exist." << endl;
-            }
+            graphList[graphIndex - 1].findMST();
             break;
         }
         case 5: {
             int graphIndex;
-            cout << "Enter the index of Graph you want to display: ";
-            while (!(cin >> graphIndex)) {
+            cout << "Enter the index of Graph to traverse using BFS: ";
+            while (!(cin >> graphIndex) || graphIndex < 1 || graphIndex > graphList.size()) {
                 cout << "Invalid input. Please enter a valid index: ";
                 cin.clear();
                 cin.ignore(numeric_limits<streamsize>::max(), '\n');
             }
-            if (graphMap.find(graphIndex) != graphMap.end()) {
-                string startCity;
-                cout << "Enter starting city for BFS: ";
-                cin >> startCity;
-                graphMap[graphIndex].BFS(startCity);
-            }
-            else {
-                cout << "Graph with index " << graphIndex << " does not exist." << endl;
-            }
-
+            string startCity;
+            cout << "Enter starting city for BFS: ";
+            cin >> startCity;
+            graphList[graphIndex - 1].BFS(startCity);
             break;
         }
         case 6: {
             int graphIndex;
-            cout << "Enter the index of Graph you want to display: ";
-            while (!(cin >> graphIndex)) {
+            cout << "Enter the index of Graph you want to traverse using DFS: ";
+            while (!(cin >> graphIndex) || graphIndex < 1 || graphIndex > graphList.size()) {
                 cout << "Invalid input. Please enter a valid index: ";
                 cin.clear();
                 cin.ignore(numeric_limits<streamsize>::max(), '\n');
             }
-            if (graphMap.find(graphIndex) != graphMap.end()) {
-                string startCity;
-                cout << "Enter starting city for DFS: ";
-                cin >> startCity;
-
-                graphMap[graphIndex].DFS(startCity);
-            }
-            else {
-                cout << "Graph with index " << graphIndex << " does not exist." << endl;
-            }
-
+            string startCity;
+            cout << "Enter starting city for DFS: ";
+            cin >> startCity;
+            graphList[graphIndex - 1].DFS(startCity);
             break;
         }
         case 7: {
             int graphIndex;
-            cout << "Enter the index of Graph you want to display: ";
-            while (!(cin >> graphIndex)) {
+            cout << "Enter the index of Graph you want to apply dijkstra's algorithm to: ";
+            while (!(cin >> graphIndex) || graphIndex < 1 || graphIndex > graphList.size()) {
                 cout << "Invalid input. Please enter a valid index: ";
                 cin.clear();
                 cin.ignore(numeric_limits<streamsize>::max(), '\n');
             }
-            if (graphMap.find(graphIndex) != graphMap.end()) {
-                string startCity;
-                cout << "Enter starting city for Dijkstra's algorithm: ";
-                cin >> startCity;
-                graphMap[graphIndex].dijkstra(startCity);
+            string startCity;
+            cout << "Enter starting city for Dijkstra's algorithm: ";
+            cin >> startCity;
+            graphList[graphIndex - 1].dijkstra(startCity);
+            break;
+        }
+        case 8:
+        {
+            int graphIndex;
+            cout << "Enter the index of Graph you want to visualize: ";
+            while (!(cin >> graphIndex) || graphIndex < 1 || graphIndex > graphList.size()) {
+                cout << "Invalid input. Please enter a valid index: ";
+                cin.clear();
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
             }
-            else {
-                cout << "Graph with index " << graphIndex << " does not exist." << endl;
-            }
+            graphList[graphIndex - 1].generateDotFile("graph.dot");
             break;
         }
         case 0:
             cout << "Exiting program." << endl;
-            g.saveGraphToFile("graph_data.txt");
+
             break;
         default:
             cout << "Invalid choice. Please try again." << endl;
         }
-        g.setGraph(graphMap);
     } while (choice != 0);
+    g.setGraphs(graphList);
+    g.saveGraphToFile(filename);
 }

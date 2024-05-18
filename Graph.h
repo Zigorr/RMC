@@ -25,10 +25,14 @@ public:
     void dijkstra(string startCity);
     unordered_map<int, Graph> getGraph();
     void setGraph(unordered_map<int, Graph> graph);
+    vector<Graph> getGraphs() const;
+    void setGraphs(const std::vector<Graph>& graphs);
     void saveGraphToFile(const std::string& filename) const;
     void loadGraphFromFile(const std::string& filename);
+    void generateDotFile(const string& filename);
 
 private:
     unordered_map<string, City> cities;
-    unordered_map<int, Graph> graphs;
+    vector<Graph> graphList;
+
 };

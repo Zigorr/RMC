@@ -19,14 +19,15 @@ unordered_map<string, City> Graph::getMap() const
 {
     return cities;
 }
-unordered_map<int, Graph> Graph::getGraph()
-{
-    return graphs;
+
+std::vector<Graph> Graph::getGraphs() const {
+    return graphList;
 }
-void Graph::setGraph(unordered_map<int, Graph> graph)
-{
-    graphs = graph;
+
+void Graph::setGraphs(const std::vector<Graph>& graphs) {
+    graphList = graphs;
 }
+
 void Graph::setMap(unordered_map<string, City> map)
 {
     cities = map;
@@ -99,11 +100,16 @@ void Graph::addEdge(City start, City end, int weight)
     }
     // Check if start and end cities exist in the graph, add them if they don't
    /* findCity(start.getCityName(), end.getCityName());*/
-
-   // Retrieve the edges of the start city
-
     vector<Edge> startCityEdges = cities[start.getCityName()].getEdges();
 
+    // Retrieve the edges of the start city
+    for (const auto& edge : startCityEdges)
+    {
+        if ((edge.getStartCity() == start.getCityName() && edge.getEndCity() == end.getCityName() && edge.getWeight() == weight) ||
+            (edge.getStartCity() == end.getCityName() && edge.getEndCity() == start.getCityName() && edge.getWeight() == weight)) {
+            return; // Edge already exists
+        }
+    }
     // Create the new edge
 
     Edge newEdge(start.getCityName(), end.getCityName(), weight);
@@ -125,14 +131,10 @@ void Graph::addEdge(City start, City end, int weight)
     cities[end.getCityName()].setEdges(endCityEdges);
 
     // Output the edges for verification
-
     cout << "Edges after adding new edge:" << endl;
-
-    for (auto city : cities)
-    {
+    for (auto city : cities) {
         vector<Edge> edges = city.second.getEdges();
-        for (auto edge : edges)
-        {
+        for (auto edge : edges) {
             cout << "Start: " << edge.getStartCity() << ", End: " << edge.getEndCity() << ", Weight: " << edge.getWeight() << endl;
         }
     }
@@ -390,53 +392,140 @@ void Graph::dijkstra(string startCity) {
         }
     }
 }
-void Graph::saveGraphToFile(const string& filename) const
-{
-    ofstream file(filename);
-    if (!file.is_open())
-    {
-        cout << "Unable to open file: " << filename << endl;
-        return;
-    }
-    for (const auto& graphPair : this->graphs) {
-        file << "Graph Index: " << graphPair.first << endl;
-        const auto& cities = graphPair.second.getMap(); // Assuming getMap() returns the cities map
-        for (const auto& cityPair : cities) {
-            const City& city = cityPair.second;
-            file << city.getCityName() << endl;
 
-            const auto& edges = city.getEdges(); // Assuming getEdges() returns a vector of Edge objects
-            file << edges.size() << endl;
-            for (const auto& edge : edges) {
-                file << edge.getStartCity() << endl
-                    << edge.getEndCity() << endl
-                    << edge.getWeight() << endl;
-            }
-        }
-    }
-    file.close();
-    cout << "Graph data written to file: " << filename << endl;
-}
-void Graph::loadGraphFromFile(const string& filename) {
-    ifstream file(filename);
+void Graph::loadGraphFromFile(const std::string& filename) {
+    std::ifstream file(filename);
     if (!file.is_open()) {
-        cout << "Unable to open file for reading: " << filename << endl;
+        std::cerr << "Unable to open file: " << filename << std::endl;
         return;
     }
-    string line;
-    int currentGraphIndex = -1;
-    while (getline(file, line)) {
-        if (line.find("Graph Index: ") != string::npos) {
-            stringstream ss(line.substr(strlen("Graph Index: ")));
-            ss >> currentGraphIndex;
-            if (this->graphs.find(currentGraphIndex) == this->graphs.end()) {
-                this->graphs[currentGraphIndex] = Graph();
+
+    graphList.clear();
+    std::string line;
+    Graph currentGraph;
+    while (std::getline(file, line)) {
+        if (line.empty()) {
+            if (!currentGraph.cities.empty()) {
+                graphList.push_back(currentGraph);
+                currentGraph.cities.clear();
             }
-            // Removed detailed city and edge loading prints
             continue;
         }
-        // Processing logic remains the same, without print statements
+
+        std::istringstream ss(line);
+        std::string token;
+        ss >> token;
+
+        if (token == "Graph") {
+            int graphIndex;
+            ss >> graphIndex;
+        }
+        else if (token == "City") {
+            std::string cityName;
+            ss >> cityName;
+            //City city(cityName);
+            //currentGraph.addCity(city);
+        }
+        else if (token == "Edge") {
+            std::string startCity, endCity;
+            int weight;
+            ss >> startCity >> endCity >> weight;
+            //currentGraph.addEdge(startCity, endCity, weight);
+            vector<Edge> startCityEdges = currentGraph.cities[startCity].getEdges();
+
+            // Retrieve the edges of the start city
+            for (const auto& edge : startCityEdges)
+            {
+                if ((edge.getStartCity() == startCity && edge.getEndCity() == endCity && edge.getWeight() == weight) ||
+                    (edge.getStartCity() == endCity && edge.getEndCity() == startCity && edge.getWeight() == weight)) {
+                    return; // Edge already exists
+                }
+            }
+            // Create the new edge
+
+            Edge newEdge(startCity, endCity, weight);
+
+            // Add the new edge to the start city's edges
+
+            startCityEdges.push_back(newEdge);
+            currentGraph.cities[startCity].setEdges(startCityEdges);
+
+            vector<Edge> endCityEdges = currentGraph.cities[endCity].getEdges();
+
+            // Create the new edge
+
+            Edge reverseEdge(endCity, startCity, weight);
+
+            // Add the reverse edge to the end city's edges
+
+            endCityEdges.push_back(reverseEdge);
+            currentGraph.cities[endCity].setEdges(endCityEdges);
+
+        }
     }
+
+    if (!currentGraph.cities.empty()) {
+        graphList.push_back(currentGraph);
+    }
+
     file.close();
-    cout << "Graph data read from file: " << filename << endl;
 }
+void Graph::saveGraphToFile(const std::string& filename) const {
+    std::ofstream outFile(filename);
+    if (!outFile) {
+        std::cerr << "Unable to open file for saving graph data." << std::endl;
+        return;
+    }
+
+    for (size_t i = 0; i < graphList.size(); ++i) {
+        outFile << "Graph " << i + 1 << '\n';
+        const auto& graph = graphList[i];
+        std::unordered_set<std::string> writtenEdges; // Declaration of writtenEdges
+        for (const auto& cityPair : graph.cities) {
+            outFile << "City " << cityPair.first << '\n';
+            const auto& edges = cityPair.second.getEdges();
+            for (const auto& edge : edges) {
+                std::string edgeKey = edge.getStartCity() + " " + edge.getEndCity() + " " + std::to_string(edge.getWeight());
+                // Check if the edge has been written in any direction
+                if (writtenEdges.find(edgeKey) == writtenEdges.end()) {
+                    outFile << "Edge " << edge.getStartCity() << ' ' << edge.getEndCity() << ' ' << edge.getWeight() << '\n';
+                    // Mark both directions as written
+                    writtenEdges.insert(edgeKey);
+                    std::string reverseEdgeKey = edge.getEndCity() + " " + edge.getStartCity() + " " + std::to_string(edge.getWeight());
+                    writtenEdges.insert(reverseEdgeKey);
+                }
+            }
+        }
+        outFile << '\n';
+    }
+
+    outFile.close();
+}
+
+void Graph::generateDotFile(const string& filename) {
+    ofstream file(filename);
+    if (file.is_open()) {
+        file << "graph G {" << endl;
+        unordered_set<string> edges;
+
+        for (const auto& city : cities) {
+            for (auto edge : city.second.getEdges()) {
+                string edgeStr = "\"" + edge.getStartCity() + "\" -- \"" + edge.getEndCity() + "\" [label=" + to_string(edge.getWeight()) + "];";
+                // Ensure each edge is only written once
+                if (edges.find(edgeStr) == edges.end()) {
+                    file << "    " << edgeStr << endl;
+                    edges.insert(edgeStr);
+                }
+            }
+        }
+
+        file << "}" << endl;
+        file.close();
+        cout << "DOT file generated: " << filename << endl;
+    }
+    else {
+        cout << "Unable to open file: " << filename << endl;
+    }
+}
+
+
