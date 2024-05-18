@@ -1,0 +1,4 @@
+graph G {
+    "Cairo" -- "Alexandria" [label=200];
+    "Alexandria" -- "Cairo" [label=200];
+}
