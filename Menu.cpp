@@ -20,7 +20,7 @@ void Menu::display() {
     g.loadGraphFromFile("graph_data.txt");
 
     do {
-        
+
         cout << "\nMenu:" << endl;
         cout << "1. Add Graph" << endl;
         cout << "2. Display Graph" << endl;

@@ -1,2 +1,11 @@
-0
-0
+Graph Index: 1
+
+1
+Cairo
+Alexandria
+200
+
+1
+Alexandria
+Cairo
+200
