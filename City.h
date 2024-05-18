@@ -11,7 +11,9 @@ public:
 	City();
 	City(string cityname);
 	string getCityName() const;
+
 	void setCityName(string cityName);
 	vector<Edge>getEdges() const;
+
 	void setEdges(vector<Edge> v);
 };

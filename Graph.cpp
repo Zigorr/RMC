@@ -1,30 +1,37 @@
 #include "Graph.h"
 #include "Menu.h"
+#include "Menu.h"
+#include "City.h"
 #include "GraphVisualizer.h"
 #include <iostream>
 #include <string>
 #include <vector>
 #include <unordered_map>
-#include "Menu.h"
-#include "City.h"
 #include <stack>
 #include <unordered_set>
 #include <queue>
-#include <chrono>
-#include <thread>
+#include <sstream>
+#include <fstream>
 using namespace std;
 vector<Edge> v;// temp vector
 City c;
-unordered_map<string, City> Graph::getMap() 
+unordered_map<string, City> Graph::getMap()
 {
     return unordered_map<string, City>();
-    return cities;
 }
-
+unordered_map<int, Graph> Graph::getGraph()
+{
+    return graphs;
+}
+void Graph::setGraph(unordered_map<int, Graph> graph)
+{
+    graphs = graph;
+}
 void Graph::setMap(unordered_map<string, City> map)
 {
     cities = map;
 }
+
 void Graph::addCity(City city)
 {
     if (cities.find(city.getCityName()) != cities.end())
@@ -38,6 +45,7 @@ void Graph::addCity(City city)
     }
 
 }
+
 void Graph::findCity(string start, string end)
 {
     string answer;
@@ -79,150 +87,135 @@ void Graph::findCity(string start, string end)
 }
 void Graph::addEdge(City start, City end, int weight)
 {
+    if (cities.find(start.getCityName()) == cities.end())
+    {
+        // cout << start.getCityName() <<" added to the map" << endl;
+        addCity(start);
+    }
+    if (cities.find(end.getCityName()) == cities.end())
+    {
+        // cout << end.getCityName() << "  added to the map" << endl;
+        addCity(end);
+    }
     // Check if start and end cities exist in the graph, add them if they don't
-    findCity(start.getCityName(), end.getCityName());
+   /* findCity(start.getCityName(), end.getCityName());*/
 
-    // Retrieve the edges of the start city
+   // Retrieve the edges of the start city
+
     vector<Edge> startCityEdges = cities[start.getCityName()].getEdges();
 
     // Create the new edge
+
     Edge newEdge(start.getCityName(), end.getCityName(), weight);
 
     // Add the new edge to the start city's edges
+
     startCityEdges.push_back(newEdge);
     cities[start.getCityName()].setEdges(startCityEdges);
 
-    // Update the adjacency list for the start city
-    //adjacencyList[start.getCityName()].push_back(make_pair(end.getCityName(), weight));
+    vector<Edge> endCityEdges = cities[end.getCityName()].getEdges();
+
+    // Create the new edge
+
+    Edge reverseEdge(end.getCityName(), start.getCityName(), weight);
 
     // Add the reverse edge to the end city's edges
-    vector<Edge> endCityEdges = cities[end.getCityName()].getEdges();
-    Edge reverseEdge(end.getCityName(), start.getCityName(), weight);
+
     endCityEdges.push_back(reverseEdge);
     cities[end.getCityName()].setEdges(endCityEdges);
-    //adjacencyList[end.getCityName()].push_back(make_pair(start.getCityName(), weight));
 
     // Output the edges for verification
+
     cout << "Edges after adding new edge:" << endl;
-    for (const auto& edge : startCityEdges)
+
+    for (auto city : cities)
     {
-        cout << "Start: " << edge.getStartCity() << ", End: " << edge.getEndCity() << ", Weight: " << edge.getWeight() << endl;
+        vector<Edge> edges = city.second.getEdges();
+        for (auto edge : edges)
+        {
+            cout << "Start: " << edge.getStartCity() << ", End: " << edge.getEndCity() << ", Weight: " << edge.getWeight() << endl;
+        }
     }
 }
-
-void Graph::deleteCity(City city)
+void Graph::deleteCity(string cityName)
 {
-    string cityName = city.getCityName();
-    auto it = cities.find(cityName);
-
-    if (it != cities.end())
+    if (cities.find(cityName) != cities.end())
     {
-        cities.erase(it);
+        // Remove the city from the graph
+        cities.erase(cityName);
 
-        vector<Edge> edges = c.getEdges();
+        // Iterate over all cities
+        for (auto& cityEntry : cities)
+        {
+            vector<Edge> edges = cityEntry.second.getEdges();
+            vector<Edge> tempEdges;
+
+            // Iterate over edges of the current city
+            for (auto& edge : edges)
+            {
+                // Check if the edge does not contain the deleted city
+                if (edge.getStartCity() != cityName && edge.getEndCity() != cityName)
+                {
+                    // Add the edge to tempEdges if it does not contain the deleted city
+                    tempEdges.push_back(edge);
+                }
+            }
+
+            // Update the edges of the current city
+            cityEntry.second.setEdges(tempEdges);
+        }
+
+        cout << "City " << cityName << " deleted successfully." << endl;
+    }
+    else
+    {
+        cout << "City not found in the graph." << endl;
+    }
+}
+void Graph::deleteEdge(Edge e)
+{
+    bool edgeDeleted = false;
+
+    // Iterate over all cities
+    for (auto& cityEntry : cities)
+    {
+        // Get reference to the city
+        City& city = cityEntry.second;
+
+        // Get reference to the city's edges
+        vector<Edge> edges = city.getEdges();
         vector<Edge> tempEdges;
 
-        for (auto it = edges.begin(); it != edges.end(); ++it)
+        // Iterate over edges of the current city
+        for (auto& edge : edges)
         {
-            if (it->getStartCity() != cityName && it->getEndCity() != cityName)
+            // Check if the edge does not match the specified edge (e)
+            if (!((edge.getStartCity() == e.getStartCity() && edge.getEndCity() == e.getEndCity() && edge.getWeight() == e.getWeight()) || (edge.getStartCity() == e.getEndCity() && edge.getEndCity() == e.getStartCity() && edge.getWeight() == e.getWeight())))
             {
-                tempEdges.push_back(*it);
+                // Add the edge to tempEdges if it does not match the specified edge
+                tempEdges.push_back(edge);
+            }
+            else
+            {
+                // Set edgeDeleted to true if the edge is found and removed
+                edgeDeleted = true;
             }
         }
 
-        c.setEdges(tempEdges);
-        cout << "City " << cityName << " and its associated edges deleted successfully." << endl;
-    }
-    else
-    {
-        cout << cityName << " does not exist." << endl;
-    }
-}
+        // Update the edges of the current city
+        city.setEdges(tempEdges);
 
-void Graph::deleteEdge(Edge e)
-{
-    vector<Edge> temp;
-    v = c.getEdges();
-    bool edgeDeleted = false;
-
-    for (auto it = v.begin(); it != v.end(); ++it) {
-        if (it->getStartCity() != e.getStartCity() || it->getEndCity() != e.getEndCity() || it->getWeight() != e.getWeight())
+        for (auto remainingEdge : tempEdges)
         {
-            temp.push_back(*it);
-        }
-        else
-        {
-            edgeDeleted = true;
+            cout << "Start: " << remainingEdge.getStartCity() << ", End: " << remainingEdge.getEndCity() << ", Weight: " << remainingEdge.getWeight() << endl;
         }
     }
 
-    if (edgeDeleted)
+    if (!edgeDeleted)
     {
-        cout << "Edge deleted successfully." << endl;
-        v = temp;
-        c.setEdges(v);
-    }
-    else
-    {
-        cout << "Edge with the specified details not found." << endl;
-    }
-
-    cout << "Remaining edges:" << endl;
-    for (auto it = v.begin(); it != v.end(); it++) {
-        cout << "Start: " << it->getStartCity() << " -> " << "End: " << it->getEndCity() << " Weight: " << it->getWeight() << endl;
+        cout << "Edge with the specified details not found in any city." << endl;
     }
 }
-//void Graph::findMST() const {
-//    if (cities.empty()) {
-//        cout << "Graph is empty. Cannot find Minimum Spanning Tree." << endl;
-//        return;
-//    }
-//
-//    unordered_set<string> visited;
-//    priority_queue<pair<int, pair<string, string>>, vector<pair<int, pair<string, string>>>, greater<pair<int, pair<string, string>>>> pq;
-//
-//    // Start with an arbitrary city (e.g., the first city)
-//    string startCity = cities.begin()->first;
-//    visited.insert(startCity);
-//
-//    // Add all edges from the start city to the priority queue
-//    for (const auto& neighbor : adjacencyList.at(startCity)) {
-//        pq.push(make_pair(neighbor.second, make_pair(startCity, neighbor.first)));
-//    }
-//
-//    int totalDistance = 0;
-//    cout << "Minimum Spanning Tree:" << endl;
-//    while (!pq.empty() && visited.size() < cities.size()) {
-//        auto edge = pq.top();
-//        pq.pop();
-//
-//        int distance = edge.first;
-//        string fromCity = edge.second.first;
-//        string toCity = edge.second.second;
-//
-//        if (visited.find(toCity) != visited.end()) {
-//            continue; // Skip if the destination city is already visited
-//        }
-//
-//        visited.insert(toCity);
-//        totalDistance += distance;
-//        cout << "From: " << fromCity << " to " << toCity << ", Distance: " << distance << endl;
-//
-//        // Add edges from the newly visited city to the priority queue
-//        for (const auto& neighbor : adjacencyList.at(toCity)) {
-//            if (visited.find(neighbor.first) == visited.end()) {
-//                pq.push(make_pair(neighbor.second, make_pair(toCity, neighbor.first)));
-//            }
-//        }
-//    }
-//
-//    if (visited.size() < cities.size()) {
-//        cout << "Graph is not connected. Minimum Spanning Tree not found." << endl;
-//        return;
-//    }
-//
-//    cout << "Total Distance of Minimum Spanning Tree: " << totalDistance << endl;
-//}
 void Graph::findMST() {
     if (cities.empty()) {
         cout << "Graph is empty. Cannot find Minimum Spanning Tree." << endl;
@@ -273,10 +266,6 @@ void Graph::findMST() {
 
     cout << "Total Distance of Minimum Spanning Tree: " << totalDistance << endl;
 }
-
-
-// Function to perform BFS traversal
-//
 void Graph::BFS(string startCity) {
     if (cities.find(startCity) == cities.end()) {
         cout << "City " << startCity << " does not exist in the graph." << endl;
@@ -306,41 +295,6 @@ void Graph::BFS(string startCity) {
     }
     cout << endl;
 }
-
-
-
-//// Function to perform DFS traversal
-//void Graph::DFS(const string& startCity) const {
-//    if (cities.find(startCity) == cities.end()) {
-//        cout << "City " << startCity << " does not exist in the graph." << endl;
-//        return;
-//    }
-//    unordered_set<string> visited;
-//    stack<string> s;
-//
-//    s.push(startCity);
-//
-//    cout << "Depth First Search traversal starting from " << startCity << ":" << endl;
-//    while (!s.empty()) {
-//        string city = s.top();
-//        s.pop();
-//
-//        if (visited.find(city) == visited.end()) {
-//            cout << city << " ";
-//            visited.insert(city);
-//
-//            // Check if the city has neighbors before accessing adjacencyList
-//            if (cities.find(city) != cities.end() && adjacencyList.find(city) != adjacencyList.end()) {
-//                for (const auto& neighbor : adjacencyList.at(city)) {
-//                    if (visited.find(neighbor.first) == visited.end()) {
-//                        s.push(neighbor.first);
-//                    }
-//                }
-//            }
-//        }
-//    }
-//    cout << endl;
-//}
 void Graph::DFS(string startCity) {
     if (cities.find(startCity) == cities.end()) {
         cout << "City " << startCity << " does not exist in the graph." << endl;
@@ -371,15 +325,11 @@ void Graph::DFS(string startCity) {
     }
     cout << endl;
 }
-
-
 void Graph::displayGraphData() {
     if (cities.empty()) {
         cout << "Graph is empty." << endl;
         return;
     }
-
-    // Display cities and their edges
     cout << "Cities in the graph:" << endl;
     for (auto city : cities) {
         cout << city.first << ":" << endl;
@@ -390,9 +340,6 @@ void Graph::displayGraphData() {
         }
         cout << endl;
     }
-
-    // Visualize the graph
-    graphVisualizer::visualize(*this);
 }
 void Graph::dijkstra(string startCity) {
     if (cities.find(startCity) == cities.end()) {
@@ -410,6 +357,8 @@ void Graph::dijkstra(string startCity) {
     // Priority queue to store vertices and their distances
     priority_queue<pair<int, string>, vector<pair<int, string>>, greater<pair<int, string>>> pq;
     pq.push(make_pair(0, startCity));
+
+
 
     // Process vertices
     while (!pq.empty()) {
@@ -435,39 +384,96 @@ void Graph::dijkstra(string startCity) {
         if (dist.second == INT_MAX) {
             cout << "No path from " << startCity << " to " << dist.first << endl;
         }
-        else 
+        else
         {
             cout << dist.first << ": " << dist.second << endl;
         }
     }
 }
-//void Graph::BFS(const string& startCity) const {
-//    if (cities.find(startCity) == cities.end()) {
-//        cout << "City " << startCity << " does not exist in the graph." << endl;
-//        return;
-//    }
-//
-//    unordered_set<string> visited;
-//    queue<string> q;
-//
-//    q.push(startCity);
-//    visited.insert(startCity);
-//
-//    cout << "Breadth First Search traversal starting from " << startCity << ":" << endl;
-//    while (!q.empty()) {
-//        string city = q.front();
-//        q.pop();
-//        cout << city << " ";
-//
-//        // Get neighbors from adjacency list instead of assuming outgoing edges
-//        if (adjacencyList.find(city) != adjacencyList.end()) {
-//            for (const auto& neighbor : adjacencyList.at(city)) {
-//                if (visited.find(neighbor.first) == visited.end()) {
-//                    q.push(neighbor.first);
-//                    visited.insert(neighbor.first);
-//                }
-//            }
-//        }
-//    }
-//    cout << endl;
-//}
+void Graph::writeToFile(const std::string& filename) const {
+    std::ofstream file(filename);
+    if (file.is_open()) {
+        for (const auto& graphPair : graphs) {
+            int graphIndex = graphPair.first;
+            const Graph& graph = graphPair.second;
+
+            std::cout << "Writing Graph " << graphIndex << " to file..." << std::endl;
+            file << graphIndex << std::endl;
+
+            for (const auto& cityPair : graph.getCities()) {
+                const City& city = cityPair.second;
+                file << city.getCityName() << std::endl;
+
+                const auto& edges = city.getEdges();
+                file << edges.size() << std::endl;
+                for (const auto& edge : edges) {
+                    file << edge.getStartCity() << std::endl
+                        << edge.getEndCity() << std::endl
+                        << edge.getWeight() << std::endl;
+                }
+                file << std::endl; // Add empty line to separate each city's data
+            }
+        }
+        file.close();
+        std::cout << "Graph data written to file: " << filename << std::endl;
+    }
+    else {
+        std::cout << "Unable to open file: " << filename << std::endl;
+    }
+}
+
+std::unordered_map<int, Graph> Graph::readFromFile(const std::string& filename) {
+    std::ifstream file(filename);
+    if (!file.is_open()) {
+        std::cout << "Unable to open file: " << filename << std::endl;
+        return {}; // Return an empty map on failure to open file
+    }
+
+    std::unordered_map<int, Graph> graphs; // Create a local map to hold the graph data
+    int graphIndex;
+    while (file >> graphIndex) {
+        Graph currentGraph;
+        std::string cityName;
+
+        // To consume the newline character after the graph index
+        file.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+        while (std::getline(file, cityName)) {
+            if (cityName.empty()) {
+                break; // Stop if we find an empty line indicating the end of city data for this graph
+            }
+
+            City currentCity;
+            currentCity.setCityName(cityName);
+
+            int edgeCount;
+            file >> edgeCount;
+
+            // To consume the newline character after the edge count
+            file.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+            for (int i = 0; i < edgeCount; ++i) {
+                std::string startCity, endCity;
+                int weight;
+
+                std::getline(file, startCity);
+                std::getline(file, endCity);
+                file >> weight;
+
+                // To consume the newline character after the weight
+                file.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+                Edge edge(startCity, endCity, weight);
+                currentCity.getEdges().push_back(edge);
+            }
+
+            currentGraph.addCity(currentCity);
+        }
+        graphs[graphIndex] = currentGraph;
+    }
+    file.close();
+    std::cout << "Graph data read from file: " << filename << std::endl;
+    return graphs; // Return the map of graphs
+}
+
+
